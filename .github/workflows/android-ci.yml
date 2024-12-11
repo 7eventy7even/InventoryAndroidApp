@@ -44,7 +44,7 @@ jobs:
       # The debug APK is usually located in app/build/outputs/apk/debug/app-debug.apk
       - name: Upload APK
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: app-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
