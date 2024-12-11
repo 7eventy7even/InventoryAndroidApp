@@ -1,0 +1,50 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository code
+      - name: Check out
+        uses: actions/checkout@v2
+
+      # Step 2: Set up JDK for Gradle
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      # Step 3: Cache Gradle files
+      - name: Cache Gradle files
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      # Step 4: Grant execution permissions for gradlew
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      # Step 5: Build the project using Gradle
+      - name: Build with Gradle
+        run: ./gradlew assembleDebug
+
+      # Step 6: Upload the generated APK as an artifact
+      # The debug APK is usually located in app/build/outputs/apk/debug/app-debug.apk
+      - name: Upload APK
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
