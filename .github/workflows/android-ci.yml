@@ -16,11 +16,11 @@ jobs:
         uses: actions/checkout@v2
 
       # Step 2: Set up JDK for Gradle
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: '11'
+          java-version: '17'
 
       # Step 3: Cache Gradle files
       - name: Cache Gradle files
