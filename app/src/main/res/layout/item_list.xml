@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/rootLayout"
+    android:padding="16dp"
+    tools:ignore="HardcodedText"
+    android:background="@color/white">
+
+    <!-- CardView with rounded corners wrapping the ImageView -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvProductImage"
+        android:layout_width="95dp"
+        android:layout_height="95dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="0dp">
+
+        <!-- Product Image -->
+        <ImageView
+            android:id="@+id/ivProductImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Product Name -->
+    <TextView
+        android:id="@+id/tvProductName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/cvProductImage"
+        android:layout_marginStart="16dp"
+        android:text="Product Name"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"/>
+
+    <!-- Product Category -->
+    <TextView
+        android:id="@+id/tvProductCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvProductName"
+        android:layout_toEndOf="@id/cvProductImage"
+        android:layout_marginStart="16dp"
+        android:text="Product Category"
+        android:textSize="12sp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/black" />
+
+    <!-- Product Updated -->
+    <TextView
+        android:id="@+id/tvUpdatedDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvProductCategory"
+        android:layout_toEndOf="@id/cvProductImage"
+        android:layout_marginStart="16dp"
+        android:text="Updated: Jan 1 2024 15:10"
+        android:textSize="12sp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/black" />
+
+    <!-- Product Selling Count -->
+    <TextView
+        android:id="@+id/tvSellingCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvUpdatedDate"
+        android:layout_toEndOf="@id/cvProductImage"
+        android:layout_marginStart="16dp"
+        android:text="Selling: 15 / 20"
+        android:textSize="12sp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/black" />
+
+
+</RelativeLayout>
