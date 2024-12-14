@@ -2,11 +2,9 @@ name: Android CI
 
 on:
   push:
-    tags:
-      - 'v*'  # Trigger on any version tag (v1.0, v2.0, etc.)
+    branches: [ dev ]
   pull_request:
-    branches:
-      - main
+    branches: [ dev ]
 
 jobs:
   build:
@@ -14,7 +12,7 @@ jobs:
 
     steps:
       # Step 1: Check out the repository code
-      - name: Check out
+      - name: Check out repository code
         uses: actions/checkout@v2
 
       # Step 2: Set up JDK for Gradle
@@ -24,7 +22,7 @@ jobs:
           distribution: 'adopt'
           java-version: '17'
 
-      # Step 3: Cache Gradle files
+      # Step 3: Cache Gradle files to speed up builds
       - name: Cache Gradle files
         uses: actions/cache@v2
         with:
@@ -38,36 +36,14 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      # Step 5: Build the project using Gradle
-      - name: Build with Gradle
-        run: ./gradlew assembleRelease  # Build Release APK (instead of Debug)
+      # Step 5: Build the project in debug mode
+      - name: Build with Gradle (debug)
+        run: ./gradlew assembleDebug  # This will create the debug APK
 
-      # Step 6: List APK directory contents (for debugging)
-      - name: List APK directory contents
-        run: ls -R app/build/outputs/apk/
-
-      # Step 7: Check if APK exists
-      - name: Check if APK exists
-        run: |
-          if [ -f app/build/outputs/apk/release/app-release-unsigned.apk ]; then
-            echo "APK exists!"
-          else
-            echo "APK not found!"
-            exit 1
-          fi
-
-      # Step 8: Upload APK to GitHub Releases
-      - name: Create GitHub Release and Upload APK
-        if: github.ref == 'refs/tags/*'  # Trigger only for tags
-        uses: softprops/action-gh-release@v1
-        with:
-          files: app/build/outputs/apk/release/app-release-unsigned.apk  # Use the correct file name
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Step 9: Upload APK as Artifact (Optional, for backup)
-      - name: Upload APK as Artifact
+      # Step 6: Upload the generated debug APK as an artifact
+      - name: Upload APK
+        if: always()  # Always upload the artifact, even if the build fails
         uses: actions/upload-artifact@v3
         with:
-          name: app-release-apk
-          path: app/build/outputs/apk/release/app-release.apk
+          name: app-debug-apk  # Name for the uploaded artifact
+          path: app/build/outputs/apk/debug/app-debug.apk  # Path to the debug APK
