@@ -49,7 +49,7 @@ jobs:
       # Step 7: Check if APK exists
       - name: Check if APK exists
         run: |
-          if [ -f app/build/outputs/apk/release/app-release.apk ]; then
+          if [ -f app/build/outputs/apk/release/app-release-unsigned.apk ]; then
             echo "APK exists!"
           else
             echo "APK not found!"
@@ -61,7 +61,7 @@ jobs:
         if: github.ref == 'refs/tags/*'  # Trigger only for tags
         uses: softprops/action-gh-release@v1
         with:
-          files: app/build/outputs/apk/release/app-release.apk  # Path to your release APK
+          files: app/build/outputs/apk/release/app-release-unsigned.apk  # Use the correct file name
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
