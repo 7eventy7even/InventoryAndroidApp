@@ -2,9 +2,8 @@ name: Android CI
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags:
+      - '*'
 
 jobs:
   build:
@@ -36,15 +35,42 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      # Step 5: Build the project using Gradle
-      - name: Build with Gradle
-        run: ./gradlew assembleDebug
+      # Step 5: Determine build type based on tag
+      - name: Set build type
+        id: build_type
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/*-debug ]]; then
+            echo "BUILD_TYPE=debug" >> $GITHUB_ENV
+          elif [[ "${GITHUB_REF}" == refs/tags/*-release ]]; then
+            echo "BUILD_TYPE=release" >> $GITHUB_ENV
+          else
+            echo "BUILD_TYPE=unknown" >> $GITHUB_ENV
+            exit 1
+          fi
+          echo "Build type set to: $BUILD_TYPE"
 
-      # Step 6: Upload the generated APK as an artifact
-      # The debug APK is usually located in app/build/outputs/apk/debug/app-debug.apk
-      - name: Upload APK
+      # Step 6: Build the APK based on the build type
+      - name: Build APK with Gradle
+        run: |
+          if [[ "${BUILD_TYPE}" == "debug" ]]; then
+            ./gradlew assembleDebug
+          elif [[ "${BUILD_TYPE}" == "release" ]]; then
+            ./gradlew assembleRelease
+          fi
+
+      # Step 7: Upload the APK as an artifact
+      - name: Upload APK as artifact
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: app-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: app-${{ env.BUILD_TYPE }}-apk
+          path: app/build/outputs/apk/${{ env.BUILD_TYPE }}/app-${{ env.BUILD_TYPE }}.apk
+
+      # Step 8: Create a GitHub release and upload the APK
+      - name: Create Release
+        if: github.ref == 'refs/tags/*'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: app/build/outputs/apk/${{ env.BUILD_TYPE }}/app-${{ env.BUILD_TYPE }}.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

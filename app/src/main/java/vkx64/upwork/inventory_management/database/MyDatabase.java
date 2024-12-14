@@ -14,7 +14,8 @@ public class MyDatabase extends Application {
                         AppDatabase.class,
                         "inventory-db"
                 )
-                .allowMainThreadQueries() // For simplicity in this example
+                .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
                 .build();
     }
 

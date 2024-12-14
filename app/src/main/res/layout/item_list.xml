@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/rootLayout"
     android:padding="16dp"
     tools:ignore="HardcodedText"
     android:background="@color/white">
@@ -34,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/cvProductImage"
         android:layout_marginStart="16dp"
-        android:text="Doctor Name"
+        android:text="Product Name"
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="@color/black"/>
@@ -73,7 +74,7 @@
         android:layout_below="@id/tvUpdatedDate"
         android:layout_toEndOf="@id/cvProductImage"
         android:layout_marginStart="16dp"
-        android:text="Appointment Time"
+        android:text="Selling: 15 / 20"
         android:textSize="12sp"
         android:layout_marginTop="5dp"
         android:textColor="@color/black" />
