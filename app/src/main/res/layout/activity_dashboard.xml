@@ -18,6 +18,17 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
+        android:id="@+id/btnSelectZipFile"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Import Images"
+        android:layout_marginHorizontal="50dp"
+
+        app:layout_constraintBottom_toTopOf="@+id/btnExportCsv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <Button
         android:id="@+id/btnExportCsv"
         android:layout_width="match_parent"
         android:layout_height="50dp"

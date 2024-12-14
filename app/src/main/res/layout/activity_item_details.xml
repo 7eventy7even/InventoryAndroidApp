@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ItemDetails"
+    tools:ignore="HardcodedText"
+    android:paddingHorizontal="5dp">
+
+    <LinearLayout
+        android:id="@+id/llHeader"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp">
+
+        <ImageButton
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/icon_left_arrow"
+            android:background="@null"
+            android:contentDescription="Left Arrow"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="Item Details"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"/>
+
+        <ImageButton
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@null"
+            android:background="@null"
+            android:contentDescription="Left Arrow"/>
+
+    </LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvItemImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="0dp"
+
+        app:layout_constraintTop_toBottomOf="@id/llHeader"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="25dp"
+        android:layout_marginHorizontal="10dp">
+
+        <ImageButton
+            android:id="@+id/ibItemImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/default_image"/>
+
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/tvProductID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Product ID"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="#878787"
+
+        app:layout_constraintTop_toBottomOf="@+id/cvItemImage"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="25dp"/>
+
+    <EditText
+        android:id="@+id/etProductID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="13"
+        android:background="@null"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+
+        app:layout_constraintTop_toBottomOf="@id/tvProductID"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="5dp"/>
+
+    <TextView
+        android:id="@+id/tvProductName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Product Name"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="#878787"
+
+        app:layout_constraintTop_toBottomOf="@+id/etProductID"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="25dp"/>
+
+    <EditText
+        android:id="@+id/etProductName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Banana Apple Jeans"
+        android:background="@null"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+
+        app:layout_constraintTop_toBottomOf="@id/tvProductName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="5dp"/>
+
+    <TextView
+        android:id="@+id/tvProductCategory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Product Category"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="#878787"
+
+        app:layout_constraintTop_toBottomOf="@+id/etProductName"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="35dp"/>
+
+    <EditText
+        android:id="@+id/etProductCategory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Fruits"
+        android:background="@null"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+
+        app:layout_constraintTop_toBottomOf="@id/tvProductCategory"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="5dp"/>
+
+    <!-- Left Section -->
+    <LinearLayout
+        android:id="@+id/llSellingQuantity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="start"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.5"
+        app:layout_constraintTop_toBottomOf="@id/etProductCategory"
+        android:layout_marginTop="35dp"
+        android:layout_marginStart="10dp">
+
+        <TextView
+            android:id="@+id/tvSellingQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Selling Quantity"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#878787"
+            android:gravity="center" />
+
+        <EditText
+            android:id="@+id/etSellingQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="45"
+            android:textSize="24sp"
+            android:gravity="center"
+            android:background="@null"
+            android:textColor="@color/black"
+
+            android:layout_marginTop="5dp"/>
+    </LinearLayout>
+
+    <!-- Right Section -->
+    <LinearLayout
+        android:id="@+id/llStorageQuantity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="start"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.5"
+        app:layout_constraintTop_toBottomOf="@id/etProductCategory"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="10dp">
+
+        <TextView
+            android:id="@+id/tvStorageTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Storage Quantity"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#878787"
+            android:gravity="center" />
+
+        <EditText
+            android:id="@+id/etStorageQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="45"
+            android:textSize="24sp"
+            android:gravity="center"
+            android:background="@null"
+            android:textColor="@color/black"
+            android:layout_marginTop="5dp"/>
+    </LinearLayout>
+
+    <!-- Left Section -->
+    <LinearLayout
+        android:id="@+id/llDateAdded"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="start"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.5"
+        app:layout_constraintTop_toBottomOf="@id/llSellingQuantity"
+        android:layout_marginTop="35dp"
+        android:layout_marginStart="10dp">
+
+        <TextView
+            android:id="@+id/tvDateAdded"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date Added"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#878787"
+            android:gravity="center" />
+
+        <EditText
+            android:id="@+id/etDateAdded"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="45"
+            android:textSize="24sp"
+            android:gravity="center"
+            android:background="@null"
+            android:textColor="@color/black"
+
+            android:layout_marginTop="5dp"/>
+    </LinearLayout>
+
+    <!-- Right Section -->
+    <LinearLayout
+        android:id="@+id/llLastModified"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="start"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.5"
+        app:layout_constraintTop_toBottomOf="@id/llStorageQuantity"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="10dp">
+
+        <TextView
+            android:id="@+id/tvLastModified"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Last Modified Date"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#878787"
+            android:gravity="center" />
+
+        <EditText
+            android:id="@+id/etLastModified"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="45"
+            android:textSize="24sp"
+            android:gravity="center"
+            android:background="@null"
+            android:textColor="@color/black"
+            android:layout_marginTop="5dp"
+            android:enabled="false"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnSaveChanges"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="50dp"
+        android:text="Save Changes"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

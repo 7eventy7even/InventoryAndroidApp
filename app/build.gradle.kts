@@ -32,12 +32,21 @@ android {
 }
 
 dependencies {
+    //Glide
+    implementation(libs.glide)
+    implementation(libs.swiperefreshlayout)
+    annotationProcessor(libs.compiler);
+    // QR Functionalities
+    implementation(libs.core)
+    implementation(libs.zxing.android.embedded)
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.room.common)
     implementation(libs.room.runtime)
+    implementation(libs.firebase.firestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

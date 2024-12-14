@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.OutputStream;
 import java.util.List;
 
+import vkx64.upwork.inventory_management.adapters.InventoryAdapter;
 import vkx64.upwork.inventory_management.database.AppDatabase;
 import vkx64.upwork.inventory_management.database.InventoryItem;
 import vkx64.upwork.inventory_management.database.MyDatabase;
