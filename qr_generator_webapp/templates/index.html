@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator App</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #4CAF50;
+            font-size: 2.5rem;
+        }
+        .upload-form {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .upload-form:hover {
+            transform: scale(1.05);
+        }
+        .upload-form input[type="file"] {
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 1rem;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            outline: none;
+        }
+        @media (max-width: 768px) {
+            .upload-form input[type="file"] {
+                font-size: 0.9rem; /* Adjust font size for smaller screens */
+                padding: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .upload-form input[type="file"] {
+                font-size: 0.8rem; /* Further adjust font size for very small screens */
+                padding: 6px;
+            }
+        }
+        .upload-form button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .upload-form button:hover {
+            background-color: #45a049;
+        }
+        .error-message {
+            color: #f44336;
+            margin: 10px 0;
+            font-size: 1rem;
+        }
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .item-card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .item-card:hover {
+            transform: translateY(-5px);
+        }
+        .item-info {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .item-info p {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        .qr-code {
+            text-align: center;
+        }
+        .qr-code img {
+            max-width: 200px;
+            height: auto;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        .print-button {
+            background-color: #007BFF;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            display: block;
+            margin: 20px auto;
+        }
+        .print-button:hover {
+            background-color: #0056b3;
+        }
+        .instructions {
+            background-color: #d9edf7;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            color: #31708f;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .instructions h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        .instructions p {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        /* Toast notification */
+        .toast {
+            visibility: hidden;
+            max-width: 60px;
+            height: 60px;
+            margin-left: -60px;
+            background-color: #4CAF50;
+            color: #fff;
+            text-align: center;
+            border-radius: 50%;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            top: 20%;
+            font-size: 18px;
+            padding: 16px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+            animation: fadein 0.5s, fadeout 0.5s 3s;
+        }
+
+        /* Animation */
+        @keyframes fadein {
+            from {top: 0; opacity: 0;} 
+            to {top: 20%; opacity: 1;}
+        }
+
+        @keyframes fadeout {
+            from {opacity: 1;} 
+            to {opacity: 0;}
+        }
+
+        /* Loader */
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 6s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .upload-form input[type="file"], .upload-form button {
+                width: 100%;
+            }
+
+            .items-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+
+            .item-card {
+                padding: 15px;
+            }
+
+            .print-button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .upload-form input[type="file"], .upload-form button {
+                font-size: 0.9rem;
+            }
+
+            .item-info p {
+                font-size: 1rem;
+            }
+
+            .qr-code img {
+                max-width: 150px;
+            }
+        }
+        .file-preview {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f4f4f4;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .file-preview span {
+            font-size: 1rem;
+        }
+
+        .file-preview .remove-file {
+            color: #f44336;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .file-preview .remove-file:hover {
+            text-decoration: underline;
+        }
+        .download-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        .download-button:hover {
+            background-color: #45a049;
+        }
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .items-grid, .items-grid * {
+                visibility: visible;
+            }
+            .items-grid {
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Inventory QR Code Generator</h1>
+        </div>
+        
+        <div class="instructions no-print">
+            <h3>Instructions:</h3>
+            <p>1. Upload an Excel file (.xlsx or .xls)</p>
+            <p>2. The Excel file must contain columns named: "Name" and "Id"</p>
+            <p>3. Additional columns are allowed and will be included in the QR code</p>
+        </div>
+
+        <div class="upload-form no-print">
+            <form method="post" enctype="multipart/form-data" onsubmit="showLoader()">
+                <input type="file" name="file" accept=".xlsx,.xls" onchange="showFileName(this)">
+                <button type="submit">Generate QR Codes</button>
+            </form>
+            
+            {% if error %}
+            <div class="error-message">{{ error }}</div>
+            {% endif %}
+            
+            {% if filename %}
+            <div class="file-preview">
+                <span>{{ filename }}</span>
+                <span class="remove-file" onclick="removeFile()">×</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast">
+            <div class="loader"></div>
+        </div>
+
+        {% if items %}
+        <div class="header no-print">
+            <button onclick="downloadAllQRCodes()" class="print-button">Download All QR Codes</button>
+        </div>
+        
+        <div class="items-grid">
+            {% for item in items %}
+            <div class="item-card">
+                <div class="item-info">
+                    <p>{{ item['Name'] }}</p>
+                </div>
+                <div class="qr-code">
+                    <img id="qr-{{ loop.index }}" src="data:image/png;base64,{{ item['qr_code'] }}" alt="QR Code">
+                    <button class="download-button" onclick="downloadQR('qr-{{ loop.index }}', 'QR_Code_{{ item['Name'] }}.png')">Download</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function downloadAllQRCodes() {
+        const items = document.querySelectorAll('.item-card');
+        items.forEach((item) => {
+            const img = item.querySelector('img');
+            const filename = `QR_Code_${item.querySelector('.item-info p').textContent}.png`;
+            
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            const image = new Image();
+
+            image.onload = function () {
+                canvas.width = image.width;
+                canvas.height = image.height;
+                context.drawImage(image, 0, 0);
+
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = filename;
+                link.click();
+            };
+            image.src = img.src;
+        });
+    }
+        function downloadQR(imgId, filename) {
+            const img = document.getElementById(imgId);
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            const image = new Image();
+
+        // Set canvas size to the image dimensions
+            image.onload = function () {
+                canvas.width = image.width;
+                canvas.height = image.height;
+                context.drawImage(image, 0, 0);
+            
+            // Create a link to download the image
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = filename;
+                link.click();
+            };
+            image.src = img.src;
+        }
+        // Function to show the file name once the user selects a file
+        function showFileName(input) {
+        var fileName = input.files[0].name;
+        var filePreview = document.querySelector('.file-preview');
+        
+        // If the preview doesn't exist, create one
+        if (!filePreview) {
+            var previewDiv = document.createElement('div');
+            previewDiv.classList.add('file-preview');
+            previewDiv.innerHTML = '<span>' + fileName + '</span><span class="remove-file" onclick="removeFile()">×</span>';
+            document.querySelector('.upload-form').appendChild(previewDiv);
+        } else {
+            // If the preview exists, just update the filename
+            filePreview.querySelector('span').textContent = fileName;
+        }
+    }
+
+    // Function to remove the file and hide the preview
+    function removeFile() {
+    var filePreview = document.querySelector('.file-preview');
+    if (filePreview) {
+        // Set a delay of 10 seconds before removing the file preview
+        setTimeout(function() {
+            filePreview.remove();
+        }, 10000); // 10000ms = 10 seconds
+    }
+}
+        
+        // Show loader while processing
+        function showLoader() {
+            var toast = document.getElementById("toast");
+            toast.style.visibility = "visible";
+            
+            setTimeout(function() {
+                toast.style.visibility = "hidden";
+            }, 3000 );
+        }
+    </script>
+</body>
+</html>
