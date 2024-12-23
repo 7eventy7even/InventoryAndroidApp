@@ -369,26 +369,40 @@
             image.src = img.src;
         });
     }
-        function downloadQR(imgId, filename) {
-            const img = document.getElementById(imgId);
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            const image = new Image();
+    function downloadQR(imgId, filename) {
+        const img = document.getElementById(imgId);
+        const itemName = img.closest('.item-card').querySelector('.item-info p').textContent; 
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        const image = new Image();
 
-        // Set canvas size to the image dimensions
-            image.onload = function () {
-                canvas.width = image.width;
-                canvas.height = image.height;
-                context.drawImage(image, 0, 0);
-            
-            // Create a link to download the image
-                const link = document.createElement('a');
-                link.href = canvas.toDataURL('image/png');
-                link.download = filename;
-                link.click();
-            };
-            image.src = img.src;
-        }
+        image.onload = function () {
+            const padding = 20; 
+            const textHeight = 30; 
+            const totalHeight = image.height + padding + textHeight;
+
+            canvas.width = image.width; 
+            canvas.height = totalHeight; 
+
+        
+            context.font = '25px Ariel'; // Set font size and family
+            context.fillStyle = '#FFF'; // Text color
+            context.textAlign = 'center'; // Center align the text
+            context.fillText(itemName, canvas.width / 2, textHeight / 2 + 10); // Position text
+
+        // Draw the QR code below the text
+            context.drawImage(image, 0, textHeight + padding);
+
+        // Create a link to download the image
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = filename;
+            link.click();
+        };
+
+        image.src = img.src;
+    }   
+
         // Function to show the file name once the user selects a file
         function showFileName(input) {
         var fileName = input.files[0].name;
@@ -429,3 +443,4 @@
     </script>
 </body>
 </html>
+
