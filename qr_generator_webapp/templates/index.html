@@ -370,38 +370,41 @@
         });
     }
     function downloadQR(imgId, filename) {
-        const img = document.getElementById(imgId);
-        const itemName = img.closest('.item-card').querySelector('.item-info p').textContent; 
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        const image = new Image();
+    const img = document.getElementById(imgId);
+    const itemName = img.closest('.item-card').querySelector('.item-info p').textContent;
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    const image = new Image();
 
-        image.onload = function () {
-            const padding = 20; 
-            const textHeight = 30; 
-            const totalHeight = image.height + padding + textHeight;
+    image.onload = function () {
+        const padding = 20; 
+        const textHeight = 30; 
+        const totalHeight = image.height + padding + textHeight;
 
-            canvas.width = image.width; 
-            canvas.height = totalHeight; 
+        canvas.width = image.width; 
+        canvas.height = totalHeight; 
+
+        // Fill the entire canvas with a white background
+        context.fillStyle = '#FFFFFF';
+        context.fillRect(0, 0, canvas.width, canvas.height);
 
         
-            context.font = '25px Ariel'; // Set font size and family
-            context.fillStyle = '#FFF'; // Text color
-            context.textAlign = 'center'; // Center align the text
-            context.fillText(itemName, canvas.width / 2, textHeight / 2 + 10); // Position text
+        context.font = 'bold 30px Arial'; 
+        context.fillStyle = '#000000'; 
+        context.textAlign = 'center'; 
+        context.fillText(itemName, canvas.width / 2, textHeight); 
 
-        // Draw the QR code below the text
-            context.drawImage(image, 0, textHeight + padding);
+        context.drawImage(image, 0, textHeight + padding);
 
-        // Create a link to download the image
-            const link = document.createElement('a');
-            link.href = canvas.toDataURL('image/png');
-            link.download = filename;
-            link.click();
-        };
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = filename;
+        link.click();
+    };
 
-        image.src = img.src;
-    }   
+    image.src = img.src;
+}
+
 
         // Function to show the file name once the user selects a file
         function showFileName(input) {
