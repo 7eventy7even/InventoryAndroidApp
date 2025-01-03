@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ItemDetailsActivity"
+
+    tools:ignore="HardcodedText,SmallSp"
+    android:background="@color/background">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="12dp"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- Header -->
+        <LinearLayout
+            android:id="@+id/llHeader"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="16dp">
+
+            <!-- Left Button (Hidden) -->
+            <ImageButton
+                android:id="@+id/ibLeftButton"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ic_leftarrow"
+                android:background="@null"
+                android:contentDescription="Left Arrow"
+                app:tint="@color/hints" />
+
+            <!-- Header Title -->
+            <TextView
+                android:id="@+id/tvHeader"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="Item Details"
+                android:layout_weight="1"
+                android:textSize="15sp"
+                android:textColor="@color/hints"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+            <!-- Right Button (Hidden) -->
+            <ImageButton
+                android:id="@+id/ibRightButton"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@null"
+                android:background="@null"
+                android:contentDescription="Left Arrow"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+
+            app:layout_constraintTop_toBottomOf="@id/llHeader"
+            app:layout_constraintBottom_toTopOf="@id/llBottomButtons"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="10dp">
+
+            <!-- Item Id Container -->
+            <LinearLayout
+                android:id="@+id/llItemId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Group Id Label -->
+                <TextView
+                    android:id="@+id/tvItemId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Item ID"
+                    android:textSize="14sp"
+                    android:textColor="@color/primary_text"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="5dp"/>
+
+                <!-- Group ID Input -->
+                <EditText
+                    android:id="@+id/etItemId"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_components"
+                    android:padding="12dp"
+                    android:inputType="text"
+                    android:enabled="false"/>
+
+            </LinearLayout>
+
+            <!-- Item Name Container -->
+            <LinearLayout
+                android:id="@+id/llItemName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp">
+
+                <!-- Item Name Label -->
+                <TextView
+                    android:id="@+id/tvItemName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Item Name"
+                    android:textSize="14sp"
+                    android:textColor="@color/primary_text"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="5dp"/>
+
+                <!-- Item Name Input -->
+                <EditText
+                    android:id="@+id/etItemName"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_components"
+                    android:padding="12dp"
+                    android:inputType="text" />
+
+            </LinearLayout>
+
+            <!-- Item Category Container -->
+            <LinearLayout
+                android:id="@+id/llItemCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp">
+
+                <!-- Item Category Label -->
+                <TextView
+                    android:id="@+id/tvItemCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Item Category"
+                    android:textSize="14sp"
+                    android:textColor="@color/primary_text"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="5dp"/>
+
+                <!-- Item Category Input -->
+                <EditText
+                    android:id="@+id/etItemCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_components"
+                    android:padding="12dp"
+                    android:inputType="text" />
+
+            </LinearLayout>
+
+            <!-- Item Quantities Container -->
+            <LinearLayout
+                android:id="@+id/llItemQuantities"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <!-- Storage Quantity Container -->
+                <LinearLayout
+                    android:id="@+id/llItemStorage"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1">
+
+                    <!-- Storage Quantity Label -->
+                    <TextView
+                        android:id="@+id/tvItemStorage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Storage Quantity"
+                        android:textSize="14sp"
+                        android:textColor="@color/primary_text"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="5dp" />
+
+                    <!-- Storage Quantity Input -->
+                    <EditText
+                        android:id="@+id/etItemStorage"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_components"
+                        android:padding="12dp"
+                        android:inputType="text" />
+                </LinearLayout>
+
+                <!-- Selling Quantity Container -->
+                <LinearLayout
+                    android:id="@+id/llItemSelling"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <!-- Selling Quantity Label -->
+                    <TextView
+                        android:id="@+id/tvItemSelling"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Selling Quantity"
+                        android:textSize="14sp"
+                        android:textColor="@color/primary_text"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="5dp" />
+
+                    <!-- Selling Quantity Input -->
+                    <EditText
+                        android:id="@+id/etItemSelling"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_components"
+                        android:padding="12dp"
+                        android:inputType="text" />
+                </LinearLayout>
+
+            </LinearLayout>
+            
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Item Images"
+                    android:textSize="14sp"
+                    android:textColor="@color/primary_text"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="5dp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvGallery"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:scrollbars="horizontal" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llBottomButtons"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="16dp"
+            android:gravity="end">
+
+            <!-- Cancel Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Cancel"
+                android:textColor="@color/primary_text"
+                android:textSize="13sp"
+                app:cornerRadius="6dp"
+                android:backgroundTint="@color/red"/>
+
+            <!-- Submit Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSubmit"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Save"
+                android:textColor="@color/primary_text"
+                android:textSize="13sp"
+                app:cornerRadius="6dp"
+                android:backgroundTint="@color/green"
+                android:layout_marginStart="15dp"/>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

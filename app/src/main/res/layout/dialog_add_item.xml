@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/bg_components"
+    android:backgroundTint="@color/background"
+    tools:ignore="Autofill,HardcodedText,LabelFor">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- Item Id Container -->
+        <LinearLayout
+            android:id="@+id/llItemId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Group Id Label -->
+            <TextView
+                android:id="@+id/tvItemId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Item ID"
+                android:textSize="14sp"
+                android:textColor="@color/primary_text"
+                android:textStyle="bold"
+                android:layout_marginBottom="5dp"/>
+
+            <!-- Group ID Input -->
+            <EditText
+                android:id="@+id/etItemId"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_components"
+                android:padding="12dp"
+                android:inputType="text" />
+
+        </LinearLayout>
+
+        <!-- Item Name Container -->
+        <LinearLayout
+            android:id="@+id/llItemName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp">
+
+            <!-- Item Name Label -->
+            <TextView
+                android:id="@+id/tvItemName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Item Name"
+                android:textSize="14sp"
+                android:textColor="@color/primary_text"
+                android:textStyle="bold"
+                android:layout_marginBottom="5dp"/>
+
+            <!-- Item Name Input -->
+            <EditText
+                android:id="@+id/etItemName"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_components"
+                android:padding="12dp"
+                android:inputType="text" />
+
+        </LinearLayout>
+
+        <!-- Item Category Container -->
+        <LinearLayout
+            android:id="@+id/llItemCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp">
+
+            <!-- Item Category Label -->
+            <TextView
+                android:id="@+id/tvItemCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Item Category"
+                android:textSize="14sp"
+                android:textColor="@color/primary_text"
+                android:textStyle="bold"
+                android:layout_marginBottom="5dp"/>
+
+            <!-- Item Category Input -->
+            <EditText
+                android:id="@+id/etItemCategory"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_components"
+                android:padding="12dp"
+                android:inputType="text" />
+
+        </LinearLayout>
+
+        <!-- Item Quantities Container -->
+        <LinearLayout
+            android:id="@+id/llItemQuantities"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <!-- Storage Quantity Container -->
+            <LinearLayout
+                android:id="@+id/llItemStorage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1">
+
+                <!-- Storage Quantity Label -->
+                <TextView
+                    android:id="@+id/tvItemStorage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Storage Quantity"
+                    android:textSize="14sp"
+                    android:textColor="@color/primary_text"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="5dp" />
+
+                <!-- Storage Quantity Input -->
+                <EditText
+                    android:id="@+id/etItemStorage"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_components"
+                    android:padding="12dp"
+                    android:inputType="text" />
+            </LinearLayout>
+
+            <!-- Selling Quantity Container -->
+            <LinearLayout
+                android:id="@+id/llItemSelling"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+
+                <!-- Selling Quantity Label -->
+                <TextView
+                    android:id="@+id/tvItemSelling"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Selling Quantity"
+                    android:textSize="14sp"
+                    android:textColor="@color/primary_text"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="5dp" />
+
+                <!-- Selling Quantity Input -->
+                <EditText
+                    android:id="@+id/etItemSelling"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_components"
+                    android:padding="12dp"
+                    android:inputType="text" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Bottom Buttons -->
+        <LinearLayout
+            android:id="@+id/llBottomButtons"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginTop="16dp">
+
+            <!-- Cancel Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Cancel"
+                android:textColor="@color/primary_text"
+                android:textSize="13sp"
+                app:cornerRadius="6dp"
+                android:backgroundTint="@color/red"/>
+
+            <!-- Submit Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSubmit"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Submit"
+                android:textColor="@color/primary_text"
+                android:textSize="13sp"
+                app:cornerRadius="6dp"
+                android:backgroundTint="@color/green"
+                android:layout_marginStart="15dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SettingsActivity"
+
+    tools:ignore="HardcodedText,SmallSp"
+    android:background="@color/background">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="12dp"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- Header -->
+        <LinearLayout
+            android:id="@+id/llHeader"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="16dp">
+
+            <!-- Left Button (Hidden) -->
+            <ImageButton
+                android:id="@+id/ibLeftButton"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ic_leftarrow"
+                android:background="@null"
+                android:contentDescription="Left Arrow"
+                app:tint="@color/hints" />
+
+            <!-- Header Title -->
+            <TextView
+                android:id="@+id/tvHeader"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="Application Settings"
+                android:layout_weight="1"
+                android:textSize="15sp"
+                android:textColor="@color/hints"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+            <!-- Right Button (Hidden) -->
+            <ImageButton
+                android:id="@+id/ibRightButton"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@null"
+                android:background="@null"
+                android:contentDescription="Left Arrow"/>
+
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvXLSXToDatabase"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            app:cardBackgroundColor="@color/components"
+            app:cardCornerRadius="10dp"
+
+            app:layout_constraintTop_toBottomOf="@id/llHeader"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="25dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="16dp">
+
+                <ImageView
+                    android:id="@+id/ivDatabaseIcon"
+                    android:layout_width="26dp"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Database Icon"
+                    android:src="@drawable/ic_database"
+                    app:tint="@color/primary_text"
+
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <LinearLayout
+                    android:id="@+id/llDetails"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical"
+
+                    app:layout_constraintStart_toEndOf="@id/ivDatabaseIcon"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/ibXLSXUpload"
+                    android:layout_marginStart="10dp">
+
+                    <!-- Title Text -->
+                    <TextView
+                        android:id="@+id/title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=".xlsx to Database"
+                        android:textColor="@color/primary_text"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <!-- Subtitle Text -->
+                    <TextView
+                        android:id="@+id/description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Import/export .xlsx files to/from the database."
+                        android:textColor="@color/secondary_text"
+                        android:textSize="10sp" />
+
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/ibXLSXUpload"
+                    android:layout_width="26dp"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Upload Icon"
+                    android:src="@drawable/ic_upload"
+                    android:background="@null"
+                    app:tint="@color/primary_text"
+
+                    android:layout_marginEnd="20dp"
+                    app:layout_constraintEnd_toStartOf="@+id/ibXLSXDownload"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <ImageButton
+                    android:id="@+id/ibXLSXDownload"
+                    android:layout_width="26dp"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Download Icon"
+                    android:src="@drawable/ic_download"
+                    android:background="@null"
+                    app:tint="@color/primary_text"
+
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvProductImage"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            app:cardBackgroundColor="@color/components"
+            app:cardCornerRadius="10dp"
+
+            app:layout_constraintTop_toBottomOf="@id/cvXLSXToDatabase"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="10dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="16dp">
+
+                <ImageView
+                    android:id="@+id/ivImageIcon"
+                    android:layout_width="26dp"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Database Icon"
+                    android:src="@drawable/ic_image"
+                    app:tint="@color/primary_text"
+
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+                <LinearLayout
+                    android:id="@+id/llDetails2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical"
+
+                    app:layout_constraintStart_toEndOf="@id/ivImageIcon"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/ibImageUpload"
+                    android:layout_marginStart="10dp">
+
+                    <!-- Title Text -->
+                    <TextView
+                        android:id="@+id/tvTitle2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Product Images"
+                        android:textColor="@color/primary_text"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <!-- Subtitle Text -->
+                    <TextView
+                        android:id="@+id/tvDescription2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Import/export Images to/from the database."
+                        android:textColor="@color/secondary_text"
+                        android:textSize="10sp" />
+
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/ibImageUpload"
+                    android:layout_width="26dp"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Upload Icon"
+                    android:src="@drawable/ic_upload"
+                    android:background="@null"
+                    app:tint="@color/primary_text"
+
+                    android:layout_marginEnd="20dp"
+                    app:layout_constraintEnd_toStartOf="@+id/ibImageDownload"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <ImageButton
+                    android:id="@+id/ibImageDownload"
+                    android:layout_width="26dp"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Download Icon"
+                    android:src="@drawable/ic_download"
+                    android:background="@null"
+                    app:tint="@color/primary_text"
+
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
