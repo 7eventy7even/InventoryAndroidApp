@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/bg_components"
+    android:backgroundTint="@color/background"
+    tools:ignore="Autofill,HardcodedText,LabelFor">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="130dp"
+            android:layout_height="150dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp"
+            android:backgroundTint="@color/components"
+            android:layout_marginEnd="10dp">
+
+            <ImageView
+                android:id="@+id/ivImageGroup"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:focusable="true"
+                android:scaleType="centerCrop"/>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Group Info Container -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- Group Id Container -->
+            <LinearLayout
+                android:id="@+id/llItemId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Group Id Text -->
+                <TextView
+                    android:id="@+id/tvGroupId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Group ID"
+                    android:textSize="14sp"
+                    android:textColor="@color/primary_text"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="5dp"/>
+
+                <!-- Group ID Input -->
+                <EditText
+                    android:id="@+id/etGroupId"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_components"
+                    android:padding="12dp"
+                    android:inputType="text" />
+
+            </LinearLayout>
+
+            <!-- Group Name Container -->
+            <LinearLayout
+                android:id="@+id/llGroupName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp">
+
+                <!-- Group Name Text -->
+                <TextView
+                    android:id="@+id/tvGroupName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Group Name"
+                    android:textSize="14sp"
+                    android:textColor="@color/primary_text"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="5dp"/>
+
+                <!-- Group Name Input -->
+                <EditText
+                    android:id="@+id/etGroupName"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_components"
+                    android:padding="12dp"
+                    android:inputType="text"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Bottom Buttons -->
+    <LinearLayout
+        android:id="@+id/llBottomButtons"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="16dp">
+
+        <!-- Cancel Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Cancel"
+            android:textColor="@color/primary_text"
+            android:textSize="13sp"
+            app:cornerRadius="6dp"
+            android:backgroundTint="@color/red"/>
+
+        <!-- Submit Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSubmit"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Submit"
+            android:textColor="@color/primary_text"
+            android:textSize="13sp"
+            app:cornerRadius="6dp"
+            android:backgroundTint="@color/green"
+            android:layout_marginStart="15dp"/>
+    </LinearLayout>
+
+</LinearLayout>
+
