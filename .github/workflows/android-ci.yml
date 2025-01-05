@@ -53,8 +53,8 @@ jobs:
         id: create_release
         uses: actions/create-release@v1.1.0
         with:
-          tag_name: ${{ github.ref_name }}
-          release_name: Release ${{ github.ref_name }}
+          tag_name: main-${{ github.run_number }}
+          release_name: Release main-${{ github.run_number }}
           draft: false
           prerelease: false
         env:

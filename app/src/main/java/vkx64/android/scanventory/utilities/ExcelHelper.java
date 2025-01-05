@@ -105,7 +105,8 @@ public class ExcelHelper {
             Row row = sheet.createRow(rowIndex++);
             row.createCell(0).setCellValue(group.getGroup_id());
             row.createCell(1).setCellValue(group.getGroup_name());
-            row.createCell(2).setCellValue(group.getGroup_parent() != null ? group.getGroup_parent() : "");
+            // Replace null with "none" for export
+            row.createCell(2).setCellValue(group.getGroup_parent() != null ? group.getGroup_parent() : "none");
         }
     }
 
@@ -150,6 +151,11 @@ public class ExcelHelper {
             String groupId = row.getCell(0).getStringCellValue();
             String groupName = row.getCell(1).getStringCellValue();
             String parentGroupId = row.getCell(2) != null ? row.getCell(2).getStringCellValue() : null;
+
+            // Replace "none" with null for import
+            if ("none".equals(parentGroupId)) {
+                parentGroupId = null;
+            }
 
             TableGroups group = new TableGroups(groupId, groupName, parentGroupId);
             daoGroups.insertOrUpdateGroup(group);
