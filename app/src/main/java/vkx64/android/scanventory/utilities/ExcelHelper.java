@@ -2,7 +2,11 @@ package vkx64.android.scanventory.utilities;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
+import android.widget.Toast;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -20,39 +24,38 @@ import vkx64.android.scanventory.database.TableGroups;
 
 public class ExcelHelper {
 
-    /**
-     * Export the database (items and groups) to an Excel file.
-     *
-     * @param context  Application context
-     * @param fileUri  URI of the output file
-     */
+    private static final String TAG = "ExcelHelper";
+
     public static void exportDatabaseToXlsx(Context context, Uri fileUri) {
         new Thread(() -> {
             try (Workbook workbook = new XSSFWorkbook()) {
+                Log.d(TAG, "Starting export process");
+
                 // Create and populate the "Items" sheet
                 createItemSheet(context, workbook);
+                Log.d(TAG, "Items sheet created successfully");
 
                 // Create and populate the "Groups" sheet
                 createGroupSheet(context, workbook);
+                Log.d(TAG, "Groups sheet created successfully");
 
                 // Write the workbook to the file
                 try (OutputStream outputStream = context.getContentResolver().openOutputStream(fileUri)) {
                     workbook.write(outputStream);
+                    Log.d(TAG, "Workbook written to file: " + fileUri);
                 }
 
                 // Notify success
-                notifyOnMainThread(() -> System.out.println("Database exported successfully!"));
+                notifyOnMainThread(context, "Database exported successfully!", true);
             } catch (Exception e) {
-                // Notify failure
-                notifyOnMainThread(() -> System.err.println("Failed to export file: " + e.getMessage()));
+                Log.e(TAG, "Failed to export file", e);
+                notifyOnMainThread(context, "Failed to export database: " + e.getMessage(), false);
             }
         }).start();
     }
 
-    /**
-     * Create and populate the "Items" sheet in the workbook.
-     */
     private static void createItemSheet(Context context, Workbook workbook) {
+        Log.d(TAG, "Creating Items sheet");
         Sheet sheet = workbook.createSheet("Items");
 
         // Add header row
@@ -68,6 +71,7 @@ public class ExcelHelper {
 
         DaoItems daoItems = AppClient.getInstance(context).getAppDatabase().daoItems();
         List<TableItems> items = daoItems.getAllItems();
+        Log.d(TAG, "Fetched " + items.size() + " items from database");
 
         // Add item rows
         int rowIndex = 1;
@@ -78,16 +82,15 @@ public class ExcelHelper {
             row.createCell(2).setCellValue(item.getItem_category());
             row.createCell(3).setCellValue(item.getItem_storage());
             row.createCell(4).setCellValue(item.getItem_selling());
-            row.createCell(5).setCellValue(item.getGroup_id() != null ? item.getGroup_id() : "");
+            row.createCell(5).setCellValue(item.getGroup_id() != null ? item.getGroup_id() : "none");
             row.createCell(6).setCellValue(item.getItem_created());
             row.createCell(7).setCellValue(item.getItem_updated());
         }
+        Log.d(TAG, "Items sheet populated successfully");
     }
 
-    /**
-     * Create and populate the "Groups" sheet in the workbook.
-     */
     private static void createGroupSheet(Context context, Workbook workbook) {
+        Log.d(TAG, "Creating Groups sheet");
         Sheet sheet = workbook.createSheet("Groups");
 
         // Add header row
@@ -98,6 +101,7 @@ public class ExcelHelper {
 
         DaoGroups daoGroups = AppClient.getInstance(context).getAppDatabase().daoGroups();
         List<TableGroups> groups = daoGroups.getAllGroups();
+        Log.d(TAG, "Fetched " + groups.size() + " groups from database");
 
         // Add group rows
         int rowIndex = 1;
@@ -108,18 +112,14 @@ public class ExcelHelper {
             // Replace null with "none" for export
             row.createCell(2).setCellValue(group.getGroup_parent() != null ? group.getGroup_parent() : "none");
         }
+        Log.d(TAG, "Groups sheet populated successfully");
     }
 
-    /**
-     * Import items and groups from an Excel file into the database.
-     *
-     * @param context  Application context
-     * @param fileUri  URI of the input file
-     */
     public static void importXlsxToDatabase(Context context, Uri fileUri) {
         new Thread(() -> {
             try (InputStream inputStream = context.getContentResolver().openInputStream(fileUri)) {
                 Workbook workbook = new XSSFWorkbook(inputStream);
+                Log.d(TAG, "Workbook opened from file: " + fileUri);
 
                 // Import groups first to ensure all references are valid
                 importGroups(context, workbook);
@@ -127,23 +127,24 @@ public class ExcelHelper {
                 // Import items next
                 importItems(context, workbook);
 
-                // Notify success
-                notifyOnMainThread(() -> System.out.println("Database imported successfully!"));
+                notifyOnMainThread(context, "Database imported successfully!", true);
             } catch (Exception e) {
-                // Notify failure
-                notifyOnMainThread(() -> System.err.println("Failed to import file: " + e.getMessage()));
+                Log.e(TAG, "Failed to import file", e);
+                notifyOnMainThread(context, "Failed to import database: " + e.getMessage(), false);
             }
         }).start();
     }
 
-    /**
-     * Import groups from the "Groups" sheet in the workbook.
-     */
     private static void importGroups(Context context, Workbook workbook) {
+        Log.d(TAG, "Importing Groups sheet");
         Sheet sheet = workbook.getSheet("Groups");
-        if (sheet == null) return;
+        if (sheet == null) {
+            Log.e(TAG, "Groups sheet not found");
+            return;
+        }
 
         DaoGroups daoGroups = AppClient.getInstance(context).getAppDatabase().daoGroups();
+        int importedCount = 0;
 
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue; // Skip header row
@@ -159,44 +160,91 @@ public class ExcelHelper {
 
             TableGroups group = new TableGroups(groupId, groupName, parentGroupId);
             daoGroups.insertOrUpdateGroup(group);
+            importedCount++;
         }
+        Log.d(TAG, "Imported " + importedCount + " groups");
     }
 
-    /**
-     * Import items from the "Items" sheet in the workbook.
-     */
     private static void importItems(Context context, Workbook workbook) {
+        Log.d(TAG, "Importing Items sheet");
+
         Sheet sheet = workbook.getSheet("Items");
-        if (sheet == null) return;
+        if (sheet == null) {
+            Log.e(TAG, "Items sheet not found");
+            return;
+        }
 
         DaoItems daoItems = AppClient.getInstance(context).getAppDatabase().daoItems();
         DaoGroups daoGroups = AppClient.getInstance(context).getAppDatabase().daoGroups();
+        int importedCount = 0;
 
         for (Row row : sheet) {
-            if (row.getRowNum() == 0) continue; // Skip header row
+            if (row.getRowNum() == 0) continue;
 
-            String itemId = row.getCell(0).getStringCellValue();
-            String itemName = row.getCell(1).getStringCellValue();
-            String category = row.getCell(2).getStringCellValue();
-            int storage = (int) row.getCell(3).getNumericCellValue();
-            int selling = (int) row.getCell(4).getNumericCellValue();
-            String groupId = row.getCell(5) != null ? row.getCell(5).getStringCellValue() : null;
-            String dateCreated = row.getCell(6) != null ? row.getCell(6).getStringCellValue() : null;
-            String dateUpdated = row.getCell(7) != null ? row.getCell(7).getStringCellValue() : null;
+            // Read values from the row, treating empty cells as null
+            String itemId = getCellValueAsString(row.getCell(0));
+            String itemName = getCellValueAsString(row.getCell(1));
+            String category = getCellValueAsString(row.getCell(2));
+            Integer storage = getCellValueAsInteger(row.getCell(3));
+            Integer selling = getCellValueAsInteger(row.getCell(4));
+            String groupId = getCellValueAsString(row.getCell(5));
+            String dateCreated = getCellValueAsString(row.getCell(6));
+            String dateUpdated = getCellValueAsString(row.getCell(7));
 
-            // Skip invalid group references
-            if (groupId != null && daoGroups.getGroupById(groupId) == null) continue;
+            // Set groupId to null if it doesn't exist in the Groups table
+            if (groupId != null && daoGroups.getGroupById(groupId) == null) {
+                Log.w(TAG, "Invalid group ID for item '" + itemId + "': " + groupId + ". Setting to null.");
+                groupId = null;
+            }
 
-            TableItems item = new TableItems(itemId, itemName, category, storage, selling, dateCreated, dateUpdated, groupId);
+            TableItems item = new TableItems(
+                    itemId,
+                    itemName,
+                    category,
+                    storage != null ? storage : 0,
+                    selling != null ? selling : 0,
+                    dateCreated,
+                    dateUpdated,
+                    groupId
+            );
+
             daoItems.insertOrUpdateItem(item);
+            importedCount++;
+        }
+
+        Log.d(TAG, "Imported " + importedCount + " items");
+    }
+
+    private static String getCellValueAsString(Cell cell) {
+        if (cell == null) return null;
+        switch (cell.getCellType()) {
+            case STRING:
+                String value = cell.getStringCellValue().trim();
+                return value.isEmpty() ? null : value;
+            case NUMERIC:
+                return String.valueOf((int) cell.getNumericCellValue());
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue());
+            default:
+                return null;
         }
     }
 
-    /**
-     * Run a task on the main thread.
-     */
-    private static void notifyOnMainThread(Runnable runnable) {
+    private static Integer getCellValueAsInteger(Cell cell) {
+        if (cell == null) return null;
+        if (cell.getCellType() == CellType.NUMERIC) return (int) cell.getNumericCellValue();
+        if (cell.getCellType() == CellType.STRING) {
+            try {
+                return Integer.parseInt(cell.getStringCellValue().trim());
+            } catch (NumberFormatException e) {
+                Log.e(TAG, "Invalid number format: " + cell.getStringCellValue(), e);
+            }
+        }
+        return null;
+    }
+
+    private static void notifyOnMainThread(Context context, String message, boolean isSuccess) {
         android.os.Handler mainHandler = new android.os.Handler(android.os.Looper.getMainLooper());
-        mainHandler.post(runnable);
+        mainHandler.post(() -> Toast.makeText(context, message, isSuccess ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG).show());
     }
 }

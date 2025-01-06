@@ -2,6 +2,7 @@ package vkx64.android.scanventory;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,12 +38,13 @@ import vkx64.android.scanventory.utilities.QRScanner;
 public class OrderActivity extends AppCompatActivity implements QRScanner.QRScannerCallback  {
 
     private int orderId;
-    private TextView tvHeader;
     private Map<String, Integer> scannedItems = new HashMap<>();
     QRScanner qrScanner;
 
     private RecyclerView rvItemList;
     private ScannedItemsAdapter adapter;
+
+    private ImageButton ibLeftButton;
 
     private CardView cvCompleteOrder, cvCancelOrder;
 
@@ -78,11 +80,11 @@ public class OrderActivity extends AppCompatActivity implements QRScanner.QRScan
     }
 
     private void initializeViews() {
-        tvHeader = findViewById(R.id.tvHeader);
-        tvHeader.setText("Order ID: " + orderId);
-
         cvCancelOrder = findViewById(R.id.cvCancelOrder);
         cvCancelOrder.setOnClickListener(v -> finish());
+
+        ibLeftButton = findViewById(R.id.ibLeftButton);
+        ibLeftButton.setOnClickListener(v -> finish());
 
         cvCompleteOrder = findViewById(R.id.cvCompleteOrder);
         cvCompleteOrder.setOnClickListener(v -> {

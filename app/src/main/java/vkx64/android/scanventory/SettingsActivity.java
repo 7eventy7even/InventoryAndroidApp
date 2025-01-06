@@ -3,6 +3,7 @@ package vkx64.android.scanventory;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     private static final int IMPORT_ZIP_REQUEST_CODE = 3;
     private static final int EXPORT_ZIP_REQUEST_CODE = 4;
+
+    private ImageButton ibLeftButton;
 
 
     @Override
@@ -40,6 +43,10 @@ public class SettingsActivity extends AppCompatActivity {
         // Set up click listeners for image import/export buttons
         findViewById(R.id.ibImageUpload).setOnClickListener(v -> openFilePickerForImport(IMPORT_ZIP_REQUEST_CODE));
         findViewById(R.id.ibImageDownload).setOnClickListener(v -> openFilePickerForExport(EXPORT_ZIP_REQUEST_CODE));
+
+        // Set up the left button to finish the activity
+        ibLeftButton = findViewById(R.id.ibLeftButton);
+        ibLeftButton.setOnClickListener(v -> finish());
     }
 
     /**
