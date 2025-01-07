@@ -5,11 +5,7 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.InputStream;
@@ -45,7 +41,6 @@ public class ExcelHelper {
                     Log.d(TAG, "Workbook written to file: " + fileUri);
                 }
 
-                // Notify success
                 notifyOnMainThread(context, "Database exported successfully!", true);
             } catch (Exception e) {
                 Log.e(TAG, "Failed to export file", e);
@@ -149,13 +144,18 @@ public class ExcelHelper {
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue; // Skip header row
 
-            String groupId = row.getCell(0).getStringCellValue();
-            String groupName = row.getCell(1).getStringCellValue();
-            String parentGroupId = row.getCell(2) != null ? row.getCell(2).getStringCellValue() : null;
+            String groupId = getCellValueAsString(row.getCell(0));
+            String groupName = getCellValueAsString(row.getCell(1));
+            String parentGroupId = getCellValueAsString(row.getCell(2));
 
             // Replace "none" with null for import
             if ("none".equals(parentGroupId)) {
                 parentGroupId = null;
+            }
+
+            if (groupId == null || groupName == null) {
+                Log.w(TAG, "Skipping invalid group row: Missing ID or Name");
+                continue;
             }
 
             TableGroups group = new TableGroups(groupId, groupName, parentGroupId);
@@ -181,7 +181,7 @@ public class ExcelHelper {
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue;
 
-            // Read values from the row, treating empty cells as null
+            // Read and convert cell values
             String itemId = getCellValueAsString(row.getCell(0));
             String itemName = getCellValueAsString(row.getCell(1));
             String category = getCellValueAsString(row.getCell(2));
@@ -191,20 +191,25 @@ public class ExcelHelper {
             String dateCreated = getCellValueAsString(row.getCell(6));
             String dateUpdated = getCellValueAsString(row.getCell(7));
 
-            // Set groupId to null if it doesn't exist in the Groups table
+            // Validate and convert groupId
             if (groupId != null && daoGroups.getGroupById(groupId) == null) {
                 Log.w(TAG, "Invalid group ID for item '" + itemId + "': " + groupId + ". Setting to null.");
                 groupId = null;
             }
 
+            if (itemId == null || itemName == null) {
+                Log.w(TAG, "Skipping invalid item row: Missing ID or Name");
+                continue;
+            }
+
             TableItems item = new TableItems(
                     itemId,
                     itemName,
-                    category,
+                    category != null ? category : "Unknown",
                     storage != null ? storage : 0,
                     selling != null ? selling : 0,
-                    dateCreated,
-                    dateUpdated,
+                    dateCreated != null ? dateCreated : "Unknown",
+                    dateUpdated != null ? dateUpdated : "Unknown",
                     groupId
             );
 
@@ -219,8 +224,7 @@ public class ExcelHelper {
         if (cell == null) return null;
         switch (cell.getCellType()) {
             case STRING:
-                String value = cell.getStringCellValue().trim();
-                return value.isEmpty() ? null : value;
+                return cell.getStringCellValue().trim();
             case NUMERIC:
                 return String.valueOf((int) cell.getNumericCellValue());
             case BOOLEAN:
