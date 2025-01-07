@@ -35,6 +35,7 @@ dependencies {
 
     // Room
     implementation(libs.room.runtime)
+    testImplementation(libs.ext.junit)
     annotationProcessor(libs.room.compiler)
     androidTestImplementation(libs.room.testing)
 
@@ -47,6 +48,23 @@ dependencies {
     // Glide
     implementation("com.github.bumptech.glide:glide:4.15.1")
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
+
+    // Expresso
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
+    androidTestImplementation("androidx.room:room-testing:2.5.0")
+
+    // Mockito
+    testImplementation("org.mockito:mockito-core:5.5.0")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
+
+    // Robolectric
+    testImplementation("org.robolectric:robolectric:4.10")
+
+    // log4j2
+    testImplementation("org.apache.logging.log4j:log4j-core:2.20.0")
+    testImplementation("org.apache.logging.log4j:log4j-api:2.20.0")
 
     // Pull to refresh
     implementation(libs.swiperefreshlayout)

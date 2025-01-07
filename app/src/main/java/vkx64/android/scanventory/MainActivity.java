@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Load groups and items for the current group.
      */
-    private void loadItems() {
+    public void loadItems() {
         executor.execute(() -> {
             // Fetch subgroups and items for the current group
             List<TableGroups> groups = fetchSubGroups(currentGroupId);

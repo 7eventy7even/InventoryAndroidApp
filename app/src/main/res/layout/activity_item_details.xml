@@ -284,7 +284,8 @@
                 android:textColor="@color/primary_text"
                 android:textSize="13sp"
                 app:cornerRadius="6dp"
-                android:backgroundTint="@color/green"
+                android:enabled="false"
+                android:backgroundTint="@color/hints"
                 android:layout_marginStart="15dp"/>
 
         </LinearLayout>

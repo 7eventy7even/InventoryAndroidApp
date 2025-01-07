@@ -29,7 +29,7 @@ public class FileHelper {
 
         // Iterate through files and add matching ones to the list
         for (File file : files) {
-            if (file.getName().startsWith(itemId + "_")) {
+            if (file.getName().startsWith(itemId + "_") && isValidImageFormat(file.getName())) {
                 imagePaths.add(file.getAbsolutePath());
             }
         }
@@ -46,10 +46,27 @@ public class FileHelper {
             return null;
         }
 
-        // Construct the expected file name for the group image
-        File groupImageFile = new File(groupImagesDir, groupId + ".png");
+        // Get all files in the directory
+        File[] files = groupImagesDir.listFiles();
 
-        // Return the absolute path if the file exists, otherwise return null
-        return groupImageFile.exists() ? groupImageFile.getAbsolutePath() : null;
+        if (files == null) {
+            return null;
+        }
+
+        // Find the matching group image
+        for (File file : files) {
+            if (file.getName().startsWith(groupId + ".") && isValidImageFormat(file.getName())) {
+                return file.getAbsolutePath();
+            }
+        }
+
+        return null;
+    }
+
+    private static boolean isValidImageFormat(String fileName) {
+        // Check if the file name ends with .png, .jpg, or .jpeg (case insensitive)
+        return fileName.toLowerCase().endsWith(".png") ||
+                fileName.toLowerCase().endsWith(".jpg") ||
+                fileName.toLowerCase().endsWith(".jpeg");
     }
 }

@@ -140,7 +140,7 @@
                     android:layout_height="44dp"
                     android:background="@drawable/bg_components"
                     android:padding="12dp"
-                    android:inputType="text" />
+                    android:inputType="number" />
             </LinearLayout>
 
             <!-- Selling Quantity Container -->
@@ -169,7 +169,7 @@
                     android:layout_height="44dp"
                     android:background="@drawable/bg_components"
                     android:padding="12dp"
-                    android:inputType="text" />
+                    android:inputType="number" />
             </LinearLayout>
 
         </LinearLayout>

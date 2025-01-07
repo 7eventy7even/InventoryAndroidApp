@@ -10,6 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import vkx64.android.scanventory.database.AppClient;
@@ -74,12 +75,12 @@ public class ExcelHelper {
             Row row = sheet.createRow(rowIndex++);
             row.createCell(0).setCellValue(item.getItem_id());
             row.createCell(1).setCellValue(item.getItem_name());
-            row.createCell(2).setCellValue(item.getItem_category());
-            row.createCell(3).setCellValue(item.getItem_storage());
-            row.createCell(4).setCellValue(item.getItem_selling());
-            row.createCell(5).setCellValue(item.getGroup_id() != null ? item.getGroup_id() : "none");
-            row.createCell(6).setCellValue(item.getItem_created());
-            row.createCell(7).setCellValue(item.getItem_updated());
+            row.createCell(2).setCellValue(item.getItem_category() != null ? item.getItem_category() : "");
+            row.createCell(3).setCellValue(item.getItem_storage() != 0 ? item.getItem_storage() : 0);
+            row.createCell(4).setCellValue(item.getItem_selling() != 0 ? item.getItem_selling() : 0);
+            row.createCell(5).setCellValue(item.getGroup_id() != null ? item.getGroup_id() : "");
+            row.createCell(6).setCellValue(item.getItem_created() != null ? item.getItem_created() : "");
+            row.createCell(7).setCellValue(item.getItem_updated() != null ? item.getItem_updated() : "");
         }
         Log.d(TAG, "Items sheet populated successfully");
     }
@@ -100,12 +101,12 @@ public class ExcelHelper {
 
         // Add group rows
         int rowIndex = 1;
+
         for (TableGroups group : groups) {
             Row row = sheet.createRow(rowIndex++);
             row.createCell(0).setCellValue(group.getGroup_id());
             row.createCell(1).setCellValue(group.getGroup_name());
-            // Replace null with "none" for export
-            row.createCell(2).setCellValue(group.getGroup_parent() != null ? group.getGroup_parent() : "none");
+            row.createCell(2).setCellValue(group.getGroup_parent() != null ? group.getGroup_parent() : "");
         }
         Log.d(TAG, "Groups sheet populated successfully");
     }
@@ -132,13 +133,16 @@ public class ExcelHelper {
 
     private static void importGroups(Context context, Workbook workbook) {
         Log.d(TAG, "Importing Groups sheet");
+
         Sheet sheet = workbook.getSheet("Groups");
+
         if (sheet == null) {
             Log.e(TAG, "Groups sheet not found");
             return;
         }
 
         DaoGroups daoGroups = AppClient.getInstance(context).getAppDatabase().daoGroups();
+
         int importedCount = 0;
 
         for (Row row : sheet) {
@@ -147,11 +151,6 @@ public class ExcelHelper {
             String groupId = getCellValueAsString(row.getCell(0));
             String groupName = getCellValueAsString(row.getCell(1));
             String parentGroupId = getCellValueAsString(row.getCell(2));
-
-            // Replace "none" with null for import
-            if ("none".equals(parentGroupId)) {
-                parentGroupId = null;
-            }
 
             if (groupId == null || groupName == null) {
                 Log.w(TAG, "Skipping invalid group row: Missing ID or Name");
@@ -176,7 +175,11 @@ public class ExcelHelper {
 
         DaoItems daoItems = AppClient.getInstance(context).getAppDatabase().daoItems();
         DaoGroups daoGroups = AppClient.getInstance(context).getAppDatabase().daoGroups();
+
         int importedCount = 0;
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy-HH:mm");
+        String currentDateTime = dateFormat.format(new java.util.Date());
 
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue;
@@ -208,8 +211,8 @@ public class ExcelHelper {
                     category != null ? category : "Unknown",
                     storage != null ? storage : 0,
                     selling != null ? selling : 0,
-                    dateCreated != null ? dateCreated : "Unknown",
-                    dateUpdated != null ? dateUpdated : "Unknown",
+                    dateCreated != null ? dateCreated : currentDateTime,
+                    dateUpdated != null ? dateUpdated : currentDateTime,
                     groupId
             );
 
@@ -221,7 +224,8 @@ public class ExcelHelper {
     }
 
     private static String getCellValueAsString(Cell cell) {
-        if (cell == null) return null;
+        if (cell == null || cell.getCellType() == CellType.BLANK) return null;
+
         switch (cell.getCellType()) {
             case STRING:
                 return cell.getStringCellValue().trim();
@@ -235,8 +239,10 @@ public class ExcelHelper {
     }
 
     private static Integer getCellValueAsInteger(Cell cell) {
-        if (cell == null) return null;
+        if (cell == null || cell.getCellType() == CellType.BLANK) return null;
+
         if (cell.getCellType() == CellType.NUMERIC) return (int) cell.getNumericCellValue();
+
         if (cell.getCellType() == CellType.STRING) {
             try {
                 return Integer.parseInt(cell.getStringCellValue().trim());
@@ -244,6 +250,7 @@ public class ExcelHelper {
                 Log.e(TAG, "Invalid number format: " + cell.getStringCellValue(), e);
             }
         }
+
         return null;
     }
 

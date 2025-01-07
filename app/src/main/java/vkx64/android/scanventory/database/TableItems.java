@@ -20,7 +20,10 @@ public class TableItems {
     @PrimaryKey(autoGenerate = false)
     @NonNull
     public String item_id;
+
+    @NonNull
     public String item_name;
+
     public String item_category;
     public int item_storage;
     public int item_selling;
@@ -29,7 +32,7 @@ public class TableItems {
     public String group_id;
 
     // Constructor
-    public TableItems(@NonNull String item_id, String item_name, String item_category, int item_storage, int item_selling, String item_created, String item_updated, String group_id) {
+    public TableItems(@NonNull String item_id, @NonNull String item_name, String item_category, int item_storage, int item_selling, String item_created, String item_updated, String group_id) {
         this.item_id = item_id;
         this.item_name = item_name;
         this.item_category = item_category;
@@ -50,11 +53,12 @@ public class TableItems {
         this.item_id = item_id;
     }
 
+    @NonNull
     public String getItem_name() {
         return item_name;
     }
 
-    public void setItem_name(String item_name) {
+    public void setItem_name(@NonNull String item_name) {
         this.item_name = item_name;
     }
 

@@ -134,11 +134,16 @@ public class ItemDetailsActivity extends AppCompatActivity {
     }
 
     private void populateItemDetails(TableItems item) {
+        isDataChanged = false; // Prevent TextWatcher from enabling the button
+
         etItemId.setText(item.getItem_id());
         etItemName.setText(item.getItem_name());
         etItemCategory.setText(item.getItem_category());
         etItemStorage.setText(String.valueOf(item.getItem_storage()));
         etItemSelling.setText(String.valueOf(item.getItem_selling()));
+
+        btnSubmit.setEnabled(false); // Ensure button stays disabled
+        btnSubmit.setBackgroundTintList(getResources().getColorStateList(R.color.hints));
     }
 
     private void fetchItemDetails(String itemId) {
@@ -169,9 +174,13 @@ public class ItemDetailsActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Enable the submit button when any change is detected
-                isDataChanged = true;
+                if (!isDataChanged) {
+                    // Allow changes to be detected after initial population
+                    isDataChanged = true;
+                }
+                // Enable the button and set it to green
                 btnSubmit.setEnabled(true);
+                btnSubmit.setBackgroundTintList(getResources().getColorStateList(R.color.green));
             }
 
             @Override
@@ -192,7 +201,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
         Uri selectedImageUri = SingleImagePicker.handleImagePickerResult(requestCode, resultCode, data, this);
         if (selectedImageUri != null) {
             saveImage(selectedImageUri);
-            loadGallery(); // Refresh the gallery to show the new image
+            loadGallery();
         }
     }
 
@@ -209,14 +218,16 @@ public class ItemDetailsActivity extends AppCompatActivity {
         String storageValue = etItemStorage.getText().toString().trim();
         String sellingValue = etItemSelling.getText().toString().trim();
 
+        String categoryToSave = itemCategory.isEmpty() ? null : itemCategory;
+
         // Convert storage and selling values to integers, default to 0 if empty
         int itemStorage = storageValue.isEmpty() ? 0 : Integer.parseInt(storageValue);
         int itemSelling = sellingValue.isEmpty() ? 0 : Integer.parseInt(sellingValue);
 
         // Validate inputs
-        if (itemName.isEmpty() || itemCategory.isEmpty()) {
-            Toast.makeText(this, "Fields cannot be empty", Toast.LENGTH_SHORT).show();
-            return; // Exit if validation fails
+        if (itemName.isEmpty()) {
+            Toast.makeText(this, "Name Cannot be Empty", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         executor.execute(() -> {
@@ -234,7 +245,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
 
             // Update the fields that have changed
             existingItem.setItem_name(itemName);
-            existingItem.setItem_category(itemCategory);
+            existingItem.setItem_category(categoryToSave);
             existingItem.setItem_storage(itemStorage);
             existingItem.setItem_selling(itemSelling);
 
@@ -248,9 +259,19 @@ public class ItemDetailsActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 isDataChanged = false; // Reset change flag
                 btnSubmit.setEnabled(false); // Disable the button again
+                btnSubmit.setBackgroundTintList(getResources().getColorStateList(R.color.hints));
                 Toast.makeText(this, "Item updated successfully", Toast.LENGTH_SHORT).show();
             });
         });
+    }
+
+    private void updateButtonState(boolean isEnabled) {
+        btnSubmit.setEnabled(isEnabled);
+        if (isEnabled) {
+            btnSubmit.setBackgroundTintList(getResources().getColorStateList(R.color.green)); // Green when enabled
+        } else {
+            btnSubmit.setBackgroundTintList(getResources().getColorStateList(R.color.hints)); // Gray when disabled
+        }
     }
 
     // Shutdown the executor when the activity is destroyed to avoid leaks

@@ -56,16 +56,17 @@ public class AddItemDialogFragment extends DialogFragment {
             String itemStorage = etItemStorage.getText().toString().trim();
             String itemSelling = etItemSelling.getText().toString().trim();
 
-            int storageValue = Integer.parseInt(itemStorage);
-            int sellingValue = Integer.parseInt(itemSelling);
-
             // Validate inputs
             if (itemId.isEmpty() || itemName.isEmpty()) {
-                Toast.makeText(requireContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Item Name and ID is required.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if (listener != null) listener.onSubmit(itemId, itemName, itemCategory, storageValue, sellingValue);
+            String finalCategory = itemCategory.isEmpty() ? null : itemCategory;
+            int storageValue = itemStorage.isEmpty() ? 0 : Integer.parseInt(itemStorage);
+            int sellingValue = itemSelling.isEmpty() ? 0 : Integer.parseInt(itemSelling);
+
+            if (listener != null) listener.onSubmit(itemId, itemName, finalCategory, storageValue, sellingValue);
             dismiss();
         });
 
@@ -79,8 +80,7 @@ public class AddItemDialogFragment extends DialogFragment {
                 }
             }
             return null;
-        }
-        });
+        }});
 
         return view;
     }

@@ -7,7 +7,7 @@ import androidx.room.Room;
 public class AppClient {
 
     private static AppClient instance;
-    private final AppDatabase appDatabase;
+    private AppDatabase appDatabase;
 
     private AppClient(Context context) {
         appDatabase = Room.databaseBuilder(context, AppDatabase.class, "inventory_management_db")
@@ -24,5 +24,10 @@ public class AppClient {
 
     public AppDatabase getAppDatabase() {
         return appDatabase;
+    }
+
+    // For Test Case
+    public void setAppDatabase(AppDatabase newDatabase) {
+        this.appDatabase = newDatabase;
     }
 }
