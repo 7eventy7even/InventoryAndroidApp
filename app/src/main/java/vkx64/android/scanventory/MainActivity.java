@@ -32,15 +32,18 @@ import java.util.Stack;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import vkx64.android.scanventory.adapter.BreadcrumbAdapter;
 import vkx64.android.scanventory.adapter.MainAdapter;
 import vkx64.android.scanventory.database.AppClient;
 import vkx64.android.scanventory.database.AppDatabase;
+import vkx64.android.scanventory.database.DaoGroups;
 import vkx64.android.scanventory.database.TableGroups;
 import vkx64.android.scanventory.database.TableItems;
 import vkx64.android.scanventory.database.TableOrders;
 import vkx64.android.scanventory.dialog.AddGroupDialogFragment;
 import vkx64.android.scanventory.dialog.AddItemDialogFragment;
 import vkx64.android.scanventory.utilities.FileHelper;
+import vkx64.android.scanventory.utilities.SingleImagePicker;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,6 +53,12 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton ibNewFolder, ibNewItem, ivSettings;
     private EditText etSearch;
     private CardView cvNewOrder, cvOrderHistory;
+
+    // Breadcrumb Adapter
+    private RecyclerView rvBreadcrumbs;
+    private BreadcrumbAdapter breadcrumbAdapter;
+    private final List<String> breadcrumbTrail = new ArrayList<>();
+    private static final String DEFAULT_BREADCRUMB = "Home";
 
     // Adapter
     private MainAdapter mainAdapter;
@@ -117,6 +126,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {}
         });
+
+        rvBreadcrumbs = findViewById(R.id.rvBreadcrumbs);
+        breadcrumbTrail.add(DEFAULT_BREADCRUMB);
+        rvBreadcrumbs.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        breadcrumbAdapter = new BreadcrumbAdapter(breadcrumbTrail, position -> navigateToBreadcrumb(position));
+        rvBreadcrumbs.setAdapter(breadcrumbAdapter);
     }
 
     private void newOrder() {
@@ -219,10 +234,52 @@ public class MainActivity extends AppCompatActivity {
             public void onProductLongClick(TableItems item) {
                 confirmItemDeletion(item);
             }
+
+            @Override
+            public void onThreeDotMenuClick(TableGroups group) {
+                showGroupOptionsDialog(group);
+            }
         });
 
         rvItemList.setAdapter(mainAdapter);
         srItemList.setRefreshing(false);
+    }
+
+    private void showGroupOptionsDialog(TableGroups group) {
+        new AlertDialog.Builder(this)
+                .setTitle("Group Options")
+                .setItems(new String[]{"Edit Group", "Delete Group"}, (dialog, which) -> {
+                    if (which == 0) {
+                        // Edit Group
+                        showEditGroupDialog(group);
+                    } else if (which == 1) {
+                        // Delete Group
+                        confirmGroupDeletion(group);
+                    }
+                })
+                .show();
+    }
+
+    private void showEditGroupDialog(TableGroups group) {
+        AddGroupDialogFragment dialog = new AddGroupDialogFragment((groupId, groupName, imageUri) -> {
+            executor.execute(() -> {
+                group.setGroup_name(groupName);
+
+                if (imageUri != null) {
+                    SingleImagePicker.saveImageToInternalStorage(
+                            imageUri, "GroupImages", groupId + ".png", this
+                    );
+                }
+
+                AppClient.getInstance(getApplicationContext())
+                        .getAppDatabase()
+                        .daoGroups()
+                        .insertOrUpdateGroup(group);
+                runOnUiThread(this::loadItems);
+            });
+        }, group);
+
+        dialog.show(getSupportFragmentManager(), "EditGroupDialog");
     }
 
     private void handleSearch(String query) {
@@ -317,16 +374,32 @@ public class MainActivity extends AppCompatActivity {
 
     private void deleteGroup(TableGroups group) {
         executor.execute(() -> {
-            AppClient.getInstance(getApplicationContext())
-                    .getAppDatabase()
-                    .daoGroups()
-                    .deleteGroup(group);
+            DaoGroups daoGroups = AppClient.getInstance(getApplicationContext()).getAppDatabase().daoGroups();
+
+            // Delete all descendants recursively
+            deleteDescendants(daoGroups, group.getGroup_id());
+
+            // Delete the parent group
+            daoGroups.deleteGroup(group);
 
             runOnUiThread(() -> {
-                Toast.makeText(this, "Group deleted successfully", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Group and all its descendants deleted successfully", Toast.LENGTH_SHORT).show();
                 loadItems();
             });
         });
+    }
+
+    private void deleteDescendants(DaoGroups daoGroups, String parentGroupId) {
+        // Fetch all direct child groups
+        List<TableGroups> childGroups = daoGroups.getChildGroups(parentGroupId);
+
+        for (TableGroups childGroup : childGroups) {
+            // Recursively delete the children of the current child group
+            deleteDescendants(daoGroups, childGroup.getGroup_id());
+
+            // Delete the current child group
+            daoGroups.deleteGroup(childGroup);
+        }
     }
 
     private void deleteItem(TableItems item) {
@@ -351,7 +424,14 @@ public class MainActivity extends AppCompatActivity {
             // Navigate to the parent group if "..." is clicked
             if (!navigationStack.isEmpty()) {
                 currentGroupId = navigationStack.pop();
-                loadItems(); // Reload items for the parent group
+                breadcrumbTrail.remove(breadcrumbTrail.size() - 1); // Remove last breadcrumb
+
+                if (breadcrumbTrail.isEmpty()) {
+                    breadcrumbTrail.add(DEFAULT_BREADCRUMB); // Reset to default breadcrumb
+                }
+
+                breadcrumbAdapter.notifyDataSetChanged();
+                loadItems();
             }
             return;
         }
@@ -359,11 +439,31 @@ public class MainActivity extends AppCompatActivity {
         // Push the current group ID to the navigation stack
         navigationStack.push(currentGroupId);
 
+        // Add the group name to the breadcrumb trail
+        breadcrumbTrail.add(group.getGroup_name());
+        breadcrumbAdapter.notifyDataSetChanged();
+
         // Update currentGroupId and load its items
         currentGroupId = group.getGroup_id();
         loadItems();
 
         Log.d(TAG, "Navigating into group: " + group.getGroup_name() + " with ID: " + currentGroupId);
+    }
+
+    private void navigateToBreadcrumb(int position) {
+        while (breadcrumbTrail.size() > position + 1) {
+            breadcrumbTrail.remove(breadcrumbTrail.size() - 1);
+            navigationStack.pop();
+        }
+
+        currentGroupId = navigationStack.isEmpty() ? null : navigationStack.peek();
+
+        if (breadcrumbTrail.isEmpty()) {
+            breadcrumbTrail.add(DEFAULT_BREADCRUMB); // Reset to default breadcrumb
+        }
+
+        breadcrumbAdapter.notifyDataSetChanged();
+        loadItems();
     }
 
     /**
@@ -380,10 +480,21 @@ public class MainActivity extends AppCompatActivity {
      * Show the "Add Group" dialog.
      */
     private void showAddGroupDialog() {
-        AddGroupDialogFragment dialog = new AddGroupDialogFragment((groupId, groupName) -> {
-            // Create a new group with the currentGroupId as its parent
+        AddGroupDialogFragment dialog = new AddGroupDialogFragment((groupId, groupName, imageUri) -> {
             TableGroups newGroup = new TableGroups(groupId, groupName, currentGroupId);
-            addNewGroup(newGroup);
+
+            executor.execute(() -> {
+                if (imageUri != null) {
+                    SingleImagePicker.saveImageToInternalStorage(
+                            imageUri, "GroupImages", groupId + ".png", this
+                    );
+                }
+                AppClient.getInstance(getApplicationContext())
+                        .getAppDatabase()
+                        .daoGroups()
+                        .insertGroup(newGroup);
+                runOnUiThread(this::loadItems);
+            });
         });
 
         dialog.show(getSupportFragmentManager(), "AddGroupDialog");

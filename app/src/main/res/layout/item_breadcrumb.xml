@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
+
+    <!-- Breadcrumb Text -->
+    <TextView
+        android:id="@+id/tvBreadcrumb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:textColor="@color/hints"
+        android:text="breadcrumb"
+        android:background="?attr/selectableItemBackground" />
+
+    <!-- Divider (/) -->
+    <TextView
+        android:id="@+id/tvDivider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="4dp"
+        android:text="/"
+        android:textSize="14sp"
+        android:textColor="@color/hints"
+        android:visibility="gone" />
+</LinearLayout>

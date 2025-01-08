@@ -31,13 +31,25 @@
     <!-- Group Name -->
     <TextView
         android:id="@+id/tvGroupName"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
+        android:layout_weight="1"
         android:text="Group Name"
         android:textSize="16sp"
         android:textStyle="bold"
         android:textColor="@color/primary_text"
         android:layout_gravity="center_vertical"/>
 
+    <!-- 3-Dot Menu Button -->
+    <ImageButton
+        android:id="@+id/ibThreeDotMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_more"
+        android:background="@null"
+        android:contentDescription="More Options"
+        android:layout_marginEnd="10dp"
+        android:layout_gravity="center_vertical"
+        app:tint="@color/hints" />
 </LinearLayout>

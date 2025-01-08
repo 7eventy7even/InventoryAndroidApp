@@ -18,7 +18,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.bumptech.glide.Glide;
+
+import java.io.File;
+
 import vkx64.android.scanventory.R;
+import vkx64.android.scanventory.database.TableGroups;
+import vkx64.android.scanventory.utilities.FileHelper;
 import vkx64.android.scanventory.utilities.SingleImagePicker;
 
 public class AddGroupDialogFragment extends DialogFragment {
@@ -27,14 +33,20 @@ public class AddGroupDialogFragment extends DialogFragment {
     private Uri selectedImageUri;
     private ImageView ivImageGroup;
 
+    // Optional existing group for editing
+    private TableGroups existingGroup;
+
     public interface AddGroupDialogListener {
-        //* Listener interface for form submission *//
-        void onSubmit(String groupId, String groupName);
+        void onSubmit(String groupId, String groupName, Uri imageUri);
     }
 
     public AddGroupDialogFragment(AddGroupDialogListener listener) {
-        //* Constructor to set the listener *//
         this.listener = listener;
+    }
+
+    public AddGroupDialogFragment(AddGroupDialogListener listener, TableGroups existingGroup) {
+        this.listener = listener;
+        this.existingGroup = existingGroup;
     }
 
     @Nullable
@@ -49,6 +61,19 @@ public class AddGroupDialogFragment extends DialogFragment {
         Button btnCancel = view.findViewById(R.id.btnCancel);
         Button btnSubmit = view.findViewById(R.id.btnSubmit);
         ivImageGroup = view.findViewById(R.id.ivImageGroup);
+
+        // Disable editing for Group ID when editing an existing group
+        if (existingGroup != null) {
+            etGroupId.setText(existingGroup.getGroup_id());
+            etGroupId.setEnabled(false);
+            etGroupName.setText(existingGroup.getGroup_name());
+
+            // Load existing image if available
+            String imagePath = FileHelper.getGroupImage(requireContext(), existingGroup.getGroup_id());
+            if (imagePath != null) {
+                Glide.with(this).load(new File(imagePath)).into(ivImageGroup);
+            }
+        }
 
         // Cancel button closes the dialog
         btnCancel.setOnClickListener(v -> dismiss());
@@ -77,7 +102,7 @@ public class AddGroupDialogFragment extends DialogFragment {
                 );
             }
 
-            if (listener != null) listener.onSubmit(groupId, groupName);
+            if (listener != null) listener.onSubmit(groupId, groupName, selectedImageUri);
             dismiss();
         });
 

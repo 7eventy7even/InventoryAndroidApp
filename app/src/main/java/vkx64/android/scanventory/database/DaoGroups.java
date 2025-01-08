@@ -20,6 +20,9 @@ public interface DaoGroups {
     @Delete
     void deleteGroup(TableGroups group);
 
+    @Query("SELECT * FROM groups WHERE group_parent = :parentGroupId")
+    List<TableGroups> getChildGroups(String parentGroupId);
+
     @Query("SELECT * FROM groups WHERE group_parent = :parentId")
     List<TableGroups> getSubGroupsByParentId(String parentId);
 

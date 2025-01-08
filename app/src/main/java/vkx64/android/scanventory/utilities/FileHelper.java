@@ -29,12 +29,39 @@ public class FileHelper {
 
         // Iterate through files and add matching ones to the list
         for (File file : files) {
-            if (file.getName().startsWith(itemId + "_") && isValidImageFormat(file.getName())) {
+            if (file.getName().startsWith(itemId) && isValidImageFormat(file.getName())) {
                 imagePaths.add(file.getAbsolutePath());
             }
         }
 
         return imagePaths;
+    }
+
+    public static String getPrimaryImageForItem(Context context, String itemId) {
+        // Locate the "ItemImages" directory in app's internal storage
+        File imagesDir = new File(context.getFilesDir(), "ItemImages");
+
+        // Return null if the directory does not exist or is not valid
+        if (!imagesDir.exists() || !imagesDir.isDirectory()) {
+            return null;
+        }
+
+        // Get all files in the directory
+        File[] files = imagesDir.listFiles();
+
+        if (files == null) {
+            return null;
+        }
+
+        // Strictly match the file name to the itemId without underscores
+        for (File file : files) {
+            String fileNameWithoutExtension = file.getName().substring(0, file.getName().lastIndexOf('.'));
+            if (fileNameWithoutExtension.equals(itemId) && isValidImageFormat(file.getName())) {
+                return file.getAbsolutePath();
+            }
+        }
+
+        return null;
     }
 
     public static String getGroupImage(Context context, String groupId) {

@@ -1,15 +1,21 @@
 package vkx64.android.scanventory.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.ObjectKey;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,6 +29,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int VIEW_TYPE_GROUP = 1;
     private static final int VIEW_TYPE_PRODUCT = 2;
+    private static final Logger log = LogManager.getLogger(MainAdapter.class);
 
     private final Context context;
     private final List<Object> items;
@@ -33,6 +40,8 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         void onProductClick(TableItems item);
         void onGroupLongClick(TableGroups group); // Long press for groups
         void onProductLongClick(TableItems item); // Long press for items
+
+        void onThreeDotMenuClick(TableGroups group);
     }
 
     public MainAdapter(Context context, List<Object> items, MainClickListener listener) {
@@ -86,12 +95,14 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private final TextView tvGroupName;
         private final ImageView ivGroupIcon;
         private final MainClickListener listener;
+        private final ImageButton ibThreeDotMenu;
 
         public GroupViewHolder(@NonNull View itemView, MainClickListener listener) {
             super(itemView);
             this.listener = listener;
             tvGroupName = itemView.findViewById(R.id.tvGroupName);
             ivGroupIcon = itemView.findViewById(R.id.ivGroupImage);
+            ibThreeDotMenu = itemView.findViewById(R.id.ibThreeDotMenu);
         }
 
         public void bind(TableGroups group) {
@@ -102,6 +113,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 Glide.with(itemView.getContext())
                         .load(new File(groupImagePath))
                         .placeholder(R.drawable.ic_folders)
+                        .signature(new ObjectKey(System.currentTimeMillis()))
                         .into(ivGroupIcon);
             } else {
                 ivGroupIcon.setImageResource(R.drawable.ic_folders);
@@ -117,6 +129,10 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     listener.onGroupLongClick(group);
                 }
                 return true; // Consume the event
+            });
+
+            ibThreeDotMenu.setOnClickListener(v -> {
+                if (listener != null) listener.onThreeDotMenuClick(group); // Trigger the listener
             });
         }
     }
@@ -139,13 +155,17 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             tvProductName.setText(item.getItem_name());
             tvSellingCount.setText("Selling: " + item.getItem_selling() + "/" + item.getItem_storage());
 
-            List<String> imagePaths = FileHelper.getImagesForItem(itemView.getContext(), item.getItem_id());
-            if (!imagePaths.isEmpty()) {
+            // Fetch the primary image for the item
+            String primaryImagePath = FileHelper.getPrimaryImageForItem(itemView.getContext(), item.getItem_id());
+            Log.d("MainAdapter", "ImagePath: " + primaryImagePath);
+            if (primaryImagePath != null) {
+                // Load the primary image using Glide
                 Glide.with(itemView.getContext())
-                        .load(new File(imagePaths.get(0)))
+                        .load(new File(primaryImagePath))
                         .placeholder(R.drawable.im_placeholder)
                         .into(ivProductImage);
             } else {
+                // Use the placeholder image if no primary image is found
                 ivProductImage.setImageResource(R.drawable.im_placeholder);
             }
 

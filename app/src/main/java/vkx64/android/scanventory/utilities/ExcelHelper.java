@@ -151,6 +151,7 @@ public class ExcelHelper {
             String groupId = getCellValueAsString(row.getCell(0));
             String groupName = getCellValueAsString(row.getCell(1));
             String parentGroupId = getCellValueAsString(row.getCell(2));
+//            String parentGroupId = row.getCell(2) == null ? null : getCellValueAsString(row.getCell(2));
 
             if (groupId == null || groupName == null) {
                 Log.w(TAG, "Skipping invalid group row: Missing ID or Name");
@@ -224,7 +225,12 @@ public class ExcelHelper {
     }
 
     private static String getCellValueAsString(Cell cell) {
-        if (cell == null || cell.getCellType() == CellType.BLANK) return null;
+        if (cell == null) return null;
+
+        // Check for blank or effectively empty cells
+        if (cell.getCellType() == CellType.BLANK || (cell.getCellType() == CellType.STRING && cell.getStringCellValue().trim().isEmpty())) {
+            return null;
+        }
 
         switch (cell.getCellType()) {
             case STRING:
