@@ -5,6 +5,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -14,11 +15,14 @@ public interface DaoGroups {
     @Query("SELECT * FROM groups")
     List<TableGroups> getAllGroups();
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertGroup(TableGroups group);
 
     @Delete
     void deleteGroup(TableGroups group);
+
+    @Update
+    void updateGroup(TableGroups group);
 
     @Query("SELECT * FROM groups WHERE group_parent = :parentGroupId")
     List<TableGroups> getChildGroups(String parentGroupId);

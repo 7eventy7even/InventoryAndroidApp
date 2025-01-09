@@ -1,3 +1,5 @@
+// File: app/src/main/java/vkx64/android/scanventory/MainActivity.java
+
 package vkx64.android.scanventory;
 
 import android.content.Intent;
@@ -42,6 +44,7 @@ import vkx64.android.scanventory.database.TableItems;
 import vkx64.android.scanventory.database.TableOrders;
 import vkx64.android.scanventory.dialog.AddGroupDialogFragment;
 import vkx64.android.scanventory.dialog.AddItemDialogFragment;
+import vkx64.android.scanventory.model.Breadcrumb;
 import vkx64.android.scanventory.utilities.FileHelper;
 import vkx64.android.scanventory.utilities.SingleImagePicker;
 
@@ -57,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     // Breadcrumb Adapter
     private RecyclerView rvBreadcrumbs;
     private BreadcrumbAdapter breadcrumbAdapter;
-    private final List<String> breadcrumbTrail = new ArrayList<>();
+    private final List<Breadcrumb> breadcrumbTrail = new ArrayList<>();
     private static final String DEFAULT_BREADCRUMB = "Home";
 
     // Adapter
@@ -85,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
         initializeViews(); // Set up views
         initializeBackPress(); // Handle back navigation
+
         loadItems(); // Load the root items
     }
 
@@ -116,7 +120,9 @@ public class MainActivity extends AppCompatActivity {
         etSearch = findViewById(R.id.etSearch);
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No action needed before text changes
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -124,11 +130,16 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+                // No action needed after text changes
+            }
         });
 
         rvBreadcrumbs = findViewById(R.id.rvBreadcrumbs);
-        breadcrumbTrail.add(DEFAULT_BREADCRUMB);
+
+        // Initialize breadcrumb trail with Home
+        breadcrumbTrail.add(new Breadcrumb(DEFAULT_BREADCRUMB, null));
+
         rvBreadcrumbs.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         breadcrumbAdapter = new BreadcrumbAdapter(breadcrumbTrail, position -> navigateToBreadcrumb(position));
         rvBreadcrumbs.setAdapter(breadcrumbAdapter);
@@ -166,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
             // Combine groups and items into one list
             List<Object> combinedList = new ArrayList<>();
 
-            // Return folder implementation
+            // Add "..." to navigate to parent if not at root
             if (currentGroupId != null) {
                 combinedList.add(new TableGroups("...", "...", null));
             }
@@ -263,24 +274,42 @@ public class MainActivity extends AppCompatActivity {
     private void showEditGroupDialog(TableGroups group) {
         AddGroupDialogFragment dialog = new AddGroupDialogFragment((groupId, groupName, imageUri) -> {
             executor.execute(() -> {
-                group.setGroup_name(groupName);
+                try {
+                    // Ensure that groupId remains unchanged
+                    // Typically, groupId should not change during an edit
+                    // So, avoid modifying groupId here
 
-                if (imageUri != null) {
-                    SingleImagePicker.saveImageToInternalStorage(
-                            imageUri, "GroupImages", groupId + ".png", this
-                    );
+                    // Update the group's name
+                    group.setGroup_name(groupName);
+
+                    // If an image is provided, save it
+                    if (imageUri != null) {
+                        SingleImagePicker.saveImageToInternalStorage(
+                                imageUri, "GroupImages", groupId + ".png", this
+                        );
+                    }
+
+                    // Update the group in the database
+                    AppClient.getInstance(getApplicationContext())
+                            .getAppDatabase()
+                            .daoGroups()
+                            .updateGroup(group);
+
+                    // Refresh the UI on the main thread
+                    runOnUiThread(() -> {
+                        loadItems();
+                        Toast.makeText(this, "Group updated successfully", Toast.LENGTH_SHORT).show();
+                    });
+                } catch (Exception e) {
+                    Log.e(TAG, "Error updating group", e);
+                    runOnUiThread(() -> Toast.makeText(this, "Failed to update group", Toast.LENGTH_SHORT).show());
                 }
-
-                AppClient.getInstance(getApplicationContext())
-                        .getAppDatabase()
-                        .daoGroups()
-                        .insertOrUpdateGroup(group);
-                runOnUiThread(this::loadItems);
             });
         }, group);
 
         dialog.show(getSupportFragmentManager(), "EditGroupDialog");
     }
+
 
     private void handleSearch(String query) {
         if (query.trim().isEmpty()) {
@@ -427,7 +456,7 @@ public class MainActivity extends AppCompatActivity {
                 breadcrumbTrail.remove(breadcrumbTrail.size() - 1); // Remove last breadcrumb
 
                 if (breadcrumbTrail.isEmpty()) {
-                    breadcrumbTrail.add(DEFAULT_BREADCRUMB); // Reset to default breadcrumb
+                    breadcrumbTrail.add(new Breadcrumb(DEFAULT_BREADCRUMB, null)); // Reset to default breadcrumb
                 }
 
                 breadcrumbAdapter.notifyDataSetChanged();
@@ -439,8 +468,8 @@ public class MainActivity extends AppCompatActivity {
         // Push the current group ID to the navigation stack
         navigationStack.push(currentGroupId);
 
-        // Add the group name to the breadcrumb trail
-        breadcrumbTrail.add(group.getGroup_name());
+        // Add the group name and ID to the breadcrumb trail
+        breadcrumbTrail.add(new Breadcrumb(group.getGroup_name(), group.getGroup_id()));
         breadcrumbAdapter.notifyDataSetChanged();
 
         // Update currentGroupId and load its items
@@ -451,20 +480,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void navigateToBreadcrumb(int position) {
+        // Log the current state of breadcrumbs and navigation stack
+        Log.d(TAG, "navigateToBreadcrumb: Current breadcrumb trail: " + breadcrumbTrail);
+        Log.d(TAG, "navigateToBreadcrumb: Selected breadcrumb position: " + position);
+
+        // Remove breadcrumbs and stack elements above the selected breadcrumb
         while (breadcrumbTrail.size() > position + 1) {
-            breadcrumbTrail.remove(breadcrumbTrail.size() - 1);
-            navigationStack.pop();
+            Breadcrumb removedBreadcrumb = breadcrumbTrail.remove(breadcrumbTrail.size() - 1);
+            if (!navigationStack.isEmpty()) {
+                navigationStack.pop(); // Pop only elements above the selected group
+            }
+            Log.d(TAG, "navigateToBreadcrumb: Removed breadcrumb: " + removedBreadcrumb.getName());
         }
 
-        currentGroupId = navigationStack.isEmpty() ? null : navigationStack.peek();
+        // Set currentGroupId to the selected breadcrumb's groupId
+        Breadcrumb selectedBreadcrumb = breadcrumbTrail.get(position);
+        currentGroupId = selectedBreadcrumb.getGroupId();
 
-        if (breadcrumbTrail.isEmpty()) {
-            breadcrumbTrail.add(DEFAULT_BREADCRUMB); // Reset to default breadcrumb
-        }
+        Log.d(TAG, "navigateToBreadcrumb: Updated currentGroupId: " + currentGroupId);
 
+        // Notify the breadcrumb adapter to update the UI
         breadcrumbAdapter.notifyDataSetChanged();
+
+        // Load child items for the selected group
+        Log.d(TAG, "navigateToBreadcrumb: Loading items for currentGroupId: " + currentGroupId);
         loadItems();
     }
+
 
     /**
      * Handle click on an item.
@@ -531,20 +573,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Add a new group to the database.
-     */
-    private void addNewGroup(TableGroups newGroup) {
-        executor.execute(() -> {
-            AppClient.getInstance(getApplicationContext())
-                    .getAppDatabase()
-                    .daoGroups()
-                    .insertGroup(newGroup);
-
-            runOnUiThread(this::loadItems);
-        });
-    }
-
-    /**
      * Handle back navigation for group hierarchy.
      */
     private void initializeBackPress() {
@@ -558,8 +586,19 @@ public class MainActivity extends AppCompatActivity {
 
                 // Navigate to the parent group
                 currentGroupId = navigationStack.pop();
+                if (!breadcrumbTrail.isEmpty()) {
+                    breadcrumbTrail.remove(breadcrumbTrail.size() - 1); // Remove last breadcrumb
+                }
+
+                breadcrumbAdapter.notifyDataSetChanged();
                 loadItems();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadItems(); // Refresh the RecyclerView
     }
 }

@@ -27,9 +27,12 @@ public class FileHelper {
             return imagePaths;
         }
 
+        // Define the prefix to match (itemId followed by an underscore)
+        String prefix = itemId + "_";
+
         // Iterate through files and add matching ones to the list
         for (File file : files) {
-            if (file.getName().startsWith(itemId) && isValidImageFormat(file.getName())) {
+            if (file.getName().startsWith(prefix) && isValidImageFormat(file.getName())) {
                 imagePaths.add(file.getAbsolutePath());
             }
         }

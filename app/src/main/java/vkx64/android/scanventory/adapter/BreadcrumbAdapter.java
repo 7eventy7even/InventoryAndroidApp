@@ -1,5 +1,6 @@
 package vkx64.android.scanventory.adapter;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,21 +8,21 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
 import vkx64.android.scanventory.R;
+import vkx64.android.scanventory.model.Breadcrumb;
 
 public class BreadcrumbAdapter extends RecyclerView.Adapter<BreadcrumbAdapter.BreadcrumbViewHolder> {
 
-    private final List<String> breadcrumbs;
+    private final List<Breadcrumb> breadcrumbs;
     private final BreadcrumbClickListener listener;
 
     public interface BreadcrumbClickListener {
         void onBreadcrumbClick(int position);
     }
 
-    public BreadcrumbAdapter(List<String> breadcrumbs, BreadcrumbClickListener listener) {
+    public BreadcrumbAdapter(List<Breadcrumb> breadcrumbs, BreadcrumbClickListener listener) {
         this.breadcrumbs = breadcrumbs;
         this.listener = listener;
     }
@@ -36,8 +37,8 @@ public class BreadcrumbAdapter extends RecyclerView.Adapter<BreadcrumbAdapter.Br
 
     @Override
     public void onBindViewHolder(@NonNull BreadcrumbViewHolder holder, int position) {
-        String breadcrumb = breadcrumbs.get(position);
-        holder.tvBreadcrumb.setText(breadcrumb);
+        Breadcrumb breadcrumb = breadcrumbs.get(position);
+        holder.tvBreadcrumb.setText(breadcrumb.getName());
 
         // Show divider (/) only if it's not the last item
         if (position < breadcrumbs.size() - 1) {
@@ -46,9 +47,16 @@ public class BreadcrumbAdapter extends RecyclerView.Adapter<BreadcrumbAdapter.Br
             holder.tvDivider.setVisibility(View.GONE);
         }
 
-        holder.itemView.setOnClickListener(v -> {
-            if (listener != null) listener.onBreadcrumbClick(position);
-        });
+        // Disable click listener for the current breadcrumb head
+        if (position == breadcrumbs.size() - 1) {
+            holder.itemView.setOnClickListener(null);
+            holder.itemView.setClickable(false);
+        } else {
+            holder.itemView.setOnClickListener(v -> {
+                if (listener != null) listener.onBreadcrumbClick(position);
+            });
+            holder.itemView.setClickable(true);
+        }
     }
 
     @Override

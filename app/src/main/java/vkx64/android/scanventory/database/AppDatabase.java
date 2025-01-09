@@ -18,4 +18,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract DaoItems daoItems();
     public abstract DaoOrders daoOrders();
     public abstract DaoOrderItems daoOrderItems();
+
+    // Add this
+    public abstract ClearDataDao clearDataDao();
 }

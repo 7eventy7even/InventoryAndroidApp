@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.ObjectKey;
 
 import java.util.List;
 
@@ -70,6 +71,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageVie
             Glide.with(context)
                     .load(imagePath)
                     .placeholder(R.drawable.im_placeholder)
+                    .signature(new ObjectKey(System.currentTimeMillis()))
                     .into(ivImage);
 
             ivImage.setOnClickListener(v -> {

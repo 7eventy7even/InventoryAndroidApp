@@ -254,6 +254,86 @@
 
         </androidx.cardview.widget.CardView>
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvClearData"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            app:cardBackgroundColor="@color/components"
+            app:cardCornerRadius="10dp"
+
+            app:layout_constraintTop_toBottomOf="@id/cvProductImage"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="10dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="16dp">
+
+                <ImageView
+                    android:id="@+id/ivClearDataIcon"
+                    android:layout_width="26dp"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Database Icon"
+                    android:src="@drawable/ic_trash"
+                    app:tint="@color/primary_text"
+
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+                <LinearLayout
+                    android:id="@+id/llClearDataDetails"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical"
+
+                    app:layout_constraintStart_toEndOf="@id/ivClearDataIcon"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/ibClearData2"
+                    android:layout_marginStart="10dp">
+
+                    <!-- Title Text -->
+                    <TextView
+                        android:id="@+id/tvClearDataTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Clear Data"
+                        android:textColor="@color/primary_text"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <!-- Subtitle Text -->
+                    <TextView
+                        android:id="@+id/tvClearDataDescription"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Select Whether to Clear Database or Images."
+                        android:textColor="@color/secondary_text"
+                        android:textSize="10sp" />
+
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/ibClearData2"
+                    android:layout_width="26dp"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Download Icon"
+                    android:src="@drawable/ic_trash"
+                    android:background="@null"
+                    app:tint="#FF1C1C"
+
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

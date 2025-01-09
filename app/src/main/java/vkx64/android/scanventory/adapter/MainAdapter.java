@@ -119,20 +119,29 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 ivGroupIcon.setImageResource(R.drawable.ic_folders);
             }
 
+            // Check if the group name is "..."
+            if ("...".equals(group.getGroup_name())) {
+                // Disable the three-dot menu
+                ibThreeDotMenu.setVisibility(View.GONE);
+            } else {
+                // Enable and set the click listener for the three-dot menu
+                ibThreeDotMenu.setVisibility(View.VISIBLE);
+                ibThreeDotMenu.setOnClickListener(v -> {
+                    if (listener != null) listener.onThreeDotMenuClick(group);
+                });
+            }
+
+            // Set click listener for the entire group item
             itemView.setOnClickListener(v -> {
                 if (listener != null) listener.onGroupClick(group);
             });
 
+            // Set long click listener for the group item, excluding "..."
             itemView.setOnLongClickListener(v -> {
-                // Exclude "..." folder from long press actions
                 if (!"...".equals(group.getGroup_name()) && listener != null) {
                     listener.onGroupLongClick(group);
                 }
                 return true; // Consume the event
-            });
-
-            ibThreeDotMenu.setOnClickListener(v -> {
-                if (listener != null) listener.onThreeDotMenuClick(group); // Trigger the listener
             });
         }
     }
@@ -163,6 +172,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 Glide.with(itemView.getContext())
                         .load(new File(primaryImagePath))
                         .placeholder(R.drawable.im_placeholder)
+                        .signature(new ObjectKey(System.currentTimeMillis()))
                         .into(ivProductImage);
             } else {
                 // Use the placeholder image if no primary image is found

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +12,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.io.File;
+
+import vkx64.android.scanventory.database.AppClient;
+import vkx64.android.scanventory.database.ClearDataDao;
 import vkx64.android.scanventory.utilities.ExcelHelper;
 import vkx64.android.scanventory.utilities.ZipHelper;
 
@@ -22,7 +27,7 @@ public class SettingsActivity extends AppCompatActivity {
     private static final int IMPORT_ZIP_REQUEST_CODE = 3;
     private static final int EXPORT_ZIP_REQUEST_CODE = 4;
 
-    private ImageButton ibLeftButton;
+    private ImageButton ibLeftButton, ibClearData2;
 
 
     @Override
@@ -47,6 +52,58 @@ public class SettingsActivity extends AppCompatActivity {
         // Set up the left button to finish the activity
         ibLeftButton = findViewById(R.id.ibLeftButton);
         ibLeftButton.setOnClickListener(v -> finish());
+
+        ibClearData2 = findViewById(R.id.ibClearData2);
+        ibClearData2.setOnClickListener(v -> clearAppData());
+    }
+
+    private void clearAppData() {
+        // Delete images
+        deleteImages();
+
+        // Clear all rows in the database tables
+        clearDatabaseTables();
+
+        // Provide feedback to the user
+        Toast.makeText(this, "Data cleared successfully!", Toast.LENGTH_SHORT).show();
+    }
+
+    private void clearDatabaseTables() {
+        AppClient appClient = AppClient.getInstance(this);
+        ClearDataDao clearDataDao = appClient.getAppDatabase().clearDataDao();
+
+        // Run the clearing process on a background thread
+        new Thread(() -> {
+            clearDataDao.clearOrderItems();
+            clearDataDao.clearOrders();
+            clearDataDao.clearItems();
+            clearDataDao.clearGroups();
+            clearDataDao.resetAutoIncrement(); // Optional: Reset auto-increment counters
+
+            runOnUiThread(() -> Toast.makeText(this, "Database cleared successfully!", Toast.LENGTH_SHORT).show());
+        }).start();
+    }
+
+    private void deleteImages() {
+        // Delete all images in the "GroupImages" directory
+        File groupImagesDir = new File(getFilesDir(), "GroupImages");
+        deleteDirectoryContents(groupImagesDir);
+
+        // Delete all images in the "ItemImages" directory
+        File itemImagesDir = new File(getFilesDir(), "ItemImages");
+        deleteDirectoryContents(itemImagesDir);
+    }
+
+    private void deleteDirectoryContents(File directory) {
+        if (directory.exists() && directory.isDirectory()) {
+            for (File file : directory.listFiles()) {
+                if (file.isFile()) {
+                    file.delete(); // Delete each file
+                } else if (file.isDirectory()) {
+                    deleteDirectoryContents(file); // Recursively delete contents of subdirectories
+                }
+            }
+        }
     }
 
     /**

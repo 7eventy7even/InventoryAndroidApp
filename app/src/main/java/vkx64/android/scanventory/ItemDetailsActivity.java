@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -96,16 +98,35 @@ public class ItemDetailsActivity extends AppCompatActivity {
     }
 
     private void loadGallery() {
-        List<String> imagePaths = FileHelper.getImagesForItem(this, itemId);
+        executor.execute(() -> {
+            // Fetch primary image
+            String primaryImagePath = FileHelper.getPrimaryImageForItem(this, itemId);
 
-        GalleryAdapter adapter = new GalleryAdapter(
-                this,
-                imagePaths,
-                this::openImagePicker, // Handle add image
-                this::onImageClick // Handle image click
-        );
+            // Fetch additional images
+            List<String> additionalImagePaths = FileHelper.getImagesForItem(this, itemId);
 
-        rvGallery.setAdapter(adapter);
+            // Create a combined list
+            List<String> allImagePaths = new ArrayList<>();
+
+            // Add primary image first if it exists
+            if (primaryImagePath != null) {
+                allImagePaths.add(primaryImagePath);
+            }
+
+            // Add all additional images
+            allImagePaths.addAll(additionalImagePaths);
+
+            // Update the gallery on the main thread
+            runOnUiThread(() -> {
+                GalleryAdapter adapter = new GalleryAdapter(
+                        this,
+                        allImagePaths,
+                        this::openImagePicker, // Handle add image
+                        this::onImageClick      // Handle image click
+                );
+                rvGallery.setAdapter(adapter);
+            });
+        });
     }
 
     // Handle image clicks
@@ -206,9 +227,34 @@ public class ItemDetailsActivity extends AppCompatActivity {
     }
 
     private void saveImage(Uri imageUri) {
-        // Save the image to the "ItemImages" folder with a unique name
-        String fileName = itemId + "_" + System.currentTimeMillis() + ".png";
-        SingleImagePicker.saveImageToInternalStorage(imageUri, "ItemImages", fileName, this);
+        String folderName = "ItemImages";
+        String baseFileName = itemId;
+        File folder = new File(getFilesDir(), folderName);
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+
+        // Check for existing files starting with itemId
+        File[] existingFiles = folder.listFiles((dir, name) -> name.startsWith(baseFileName) &&
+                (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg")));
+
+        String finalFileName;
+
+        if (existingFiles != null && existingFiles.length > 0) {
+            // If any file with itemId exists, append timestamp
+            String extension = ".png"; // Default extension
+            // Optionally, derive the extension from the selected image
+            finalFileName = baseFileName + "_" + System.currentTimeMillis() + extension;
+        } else {
+            // Use the first extension (e.g., png) or derive from imageUri
+            String extension = ".png"; // Default extension
+            finalFileName = baseFileName + extension;
+        }
+
+        SingleImagePicker.saveImageToInternalStorage(imageUri, folderName, finalFileName, this);
+
+        Toast.makeText(this, "Image saved as " + finalFileName, Toast.LENGTH_SHORT).show();
+        loadGallery();
     }
 
     private void saveItemDetails() {
@@ -261,6 +307,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 btnSubmit.setEnabled(false); // Disable the button again
                 btnSubmit.setBackgroundTintList(getResources().getColorStateList(R.color.hints));
                 Toast.makeText(this, "Item updated successfully", Toast.LENGTH_SHORT).show();
+                finish();
             });
         });
     }
