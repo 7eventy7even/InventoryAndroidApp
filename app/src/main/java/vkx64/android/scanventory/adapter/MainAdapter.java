@@ -29,7 +29,6 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int VIEW_TYPE_GROUP = 1;
     private static final int VIEW_TYPE_PRODUCT = 2;
-    private static final Logger log = LogManager.getLogger(MainAdapter.class);
 
     private final Context context;
     private final List<Object> items;
@@ -149,7 +148,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     // Product ViewHolder
     static class ProductViewHolder extends RecyclerView.ViewHolder {
         private final ImageView ivProductImage;
-        private final TextView tvProductName, tvSellingCount;
+        private final TextView tvProductName, tvQuantity;
         private final MainClickListener listener;
 
         public ProductViewHolder(@NonNull View itemView, MainClickListener listener) {
@@ -157,12 +156,12 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.listener = listener;
             ivProductImage = itemView.findViewById(R.id.ivProductImage);
             tvProductName = itemView.findViewById(R.id.tvProductName);
-            tvSellingCount = itemView.findViewById(R.id.tvSellingCount);
+            tvQuantity = itemView.findViewById(R.id.tvQuantity);
         }
 
         public void bind(TableItems item) {
             tvProductName.setText(item.getItem_name());
-            tvSellingCount.setText("Selling: " + item.getItem_selling() + "/" + item.getItem_storage());
+            tvQuantity.setText("(" + String.valueOf(item.getItem_storage()) + ")");
 
             // Fetch the primary image for the item
             String primaryImagePath = FileHelper.getPrimaryImageForItem(itemView.getContext(), item.getItem_id());

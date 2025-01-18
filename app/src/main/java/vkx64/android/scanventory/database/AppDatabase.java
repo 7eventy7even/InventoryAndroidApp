@@ -8,9 +8,10 @@ import androidx.room.RoomDatabase;
                 TableGroups.class,
                 TableItems.class,
                 TableOrders.class,
-                TableOrderItems.class
+                TableOrderItems.class,
+                TableMarkets.class
         },
-        version = 1,
+        version = 2,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -18,7 +19,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract DaoItems daoItems();
     public abstract DaoOrders daoOrders();
     public abstract DaoOrderItems daoOrderItems();
-
-    // Add this
     public abstract ClearDataDao clearDataDao();
+    public abstract DaoMarkets daoMarkets();
 }

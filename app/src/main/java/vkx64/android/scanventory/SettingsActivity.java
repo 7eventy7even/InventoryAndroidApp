@@ -11,12 +11,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.FragmentManager;
 
 import java.io.File;
+import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import vkx64.android.scanventory.database.AppClient;
 import vkx64.android.scanventory.database.ClearDataDao;
-import vkx64.android.scanventory.utilities.ExcelHelper;
+import vkx64.android.scanventory.utilities.ExcelUtils;
 import vkx64.android.scanventory.utilities.ZipHelper;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -27,8 +31,9 @@ public class SettingsActivity extends AppCompatActivity {
     private static final int IMPORT_ZIP_REQUEST_CODE = 3;
     private static final int EXPORT_ZIP_REQUEST_CODE = 4;
 
-    private ImageButton ibLeftButton, ibClearData2;
+    private ImageButton ibLeftButton, ibClearData1, ibClearData2, ibXLSXUpload, ibXLSXDownload, ibImageUpload, ibImageDownload;
 
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,31 +46,37 @@ public class SettingsActivity extends AppCompatActivity {
             return insets;
         });
 
-        // Set up click listeners for Excel import/export buttons
-        findViewById(R.id.ibXLSXUpload).setOnClickListener(v -> openFilePickerForImport(IMPORT_XLSX_REQUEST_CODE));
-        findViewById(R.id.ibXLSXDownload).setOnClickListener(v -> openFilePickerForExport(EXPORT_XLSX_REQUEST_CODE));
+        initializeViews();
+    }
 
-        // Set up click listeners for image import/export buttons
-        findViewById(R.id.ibImageUpload).setOnClickListener(v -> openFilePickerForImport(IMPORT_ZIP_REQUEST_CODE));
-        findViewById(R.id.ibImageDownload).setOnClickListener(v -> openFilePickerForExport(EXPORT_ZIP_REQUEST_CODE));
+    private void initializeViews() {
+        // Xlsx Upload
+        ibXLSXUpload = findViewById(R.id.ibXLSXUpload);
+        ibXLSXUpload.setOnClickListener(v -> openFilePickerForImport(IMPORT_XLSX_REQUEST_CODE));
 
-        // Set up the left button to finish the activity
+        // Xlsx Download
+        ibXLSXDownload = findViewById(R.id.ibXLSXDownload);
+        ibXLSXDownload.setOnClickListener(v -> openFilePickerForExport(EXPORT_XLSX_REQUEST_CODE));
+
+        // Image Import
+        ibImageUpload = findViewById(R.id.ibImageUpload);
+        ibImageUpload.setOnClickListener(v -> openFilePickerForImport(IMPORT_ZIP_REQUEST_CODE));
+
+        // Image Export
+        ibImageDownload = findViewById(R.id.ibImageDownload);
+        ibImageDownload.setOnClickListener(v -> openFilePickerForExport(EXPORT_ZIP_REQUEST_CODE));
+
+        // Header Left Button
         ibLeftButton = findViewById(R.id.ibLeftButton);
         ibLeftButton.setOnClickListener(v -> finish());
 
+        // Clear Image
         ibClearData2 = findViewById(R.id.ibClearData2);
-        ibClearData2.setOnClickListener(v -> clearAppData());
-    }
+        ibClearData2.setOnClickListener(v -> deleteImages());
 
-    private void clearAppData() {
-        // Delete images
-        deleteImages();
-
-        // Clear all rows in the database tables
-        clearDatabaseTables();
-
-        // Provide feedback to the user
-        Toast.makeText(this, "Data cleared successfully!", Toast.LENGTH_SHORT).show();
+        // Clear Database
+        ibClearData1 = findViewById(R.id.ibClearData1);
+        ibClearData1.setOnClickListener(v -> clearDatabaseTables());
     }
 
     private void clearDatabaseTables() {
@@ -73,15 +84,15 @@ public class SettingsActivity extends AppCompatActivity {
         ClearDataDao clearDataDao = appClient.getAppDatabase().clearDataDao();
 
         // Run the clearing process on a background thread
-        new Thread(() -> {
+        executor.execute(() -> {
             clearDataDao.clearOrderItems();
             clearDataDao.clearOrders();
             clearDataDao.clearItems();
             clearDataDao.clearGroups();
-            clearDataDao.resetAutoIncrement(); // Optional: Reset auto-increment counters
+            clearDataDao.resetAutoIncrement();
 
             runOnUiThread(() -> Toast.makeText(this, "Database cleared successfully!", Toast.LENGTH_SHORT).show());
-        }).start();
+        });
     }
 
     private void deleteImages() {
@@ -96,22 +107,20 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void deleteDirectoryContents(File directory) {
         if (directory.exists() && directory.isDirectory()) {
-            for (File file : directory.listFiles()) {
+            for (File file : Objects.requireNonNull(directory.listFiles())) {
                 if (file.isFile()) {
-                    file.delete(); // Delete each file
+                    file.delete();
                 } else if (file.isDirectory()) {
-                    deleteDirectoryContents(file); // Recursively delete contents of subdirectories
+                    deleteDirectoryContents(file);
                 }
             }
         }
     }
 
-    /**
-     * Open a file picker to select an Excel file for importing data into the database.
-     */
     private void openFilePickerForImport(int requestCode) {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
+
         if (requestCode == IMPORT_XLSX_REQUEST_CODE) {
             intent.setType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         } else if (requestCode == IMPORT_ZIP_REQUEST_CODE) {
@@ -120,12 +129,10 @@ public class SettingsActivity extends AppCompatActivity {
         startActivityForResult(intent, requestCode);
     }
 
-    /**
-     * Open a file picker to select a location for exporting database data to an Excel file.
-     */
     private void openFilePickerForExport(int requestCode) {
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
+
         if (requestCode == EXPORT_XLSX_REQUEST_CODE) {
             intent.setType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             intent.putExtra(Intent.EXTRA_TITLE, "export.xlsx");
@@ -133,6 +140,7 @@ public class SettingsActivity extends AppCompatActivity {
             intent.setType("application/zip");
             intent.putExtra(Intent.EXTRA_TITLE, "images.zip");
         }
+
         startActivityForResult(intent, requestCode);
     }
 
@@ -145,10 +153,10 @@ public class SettingsActivity extends AppCompatActivity {
             Uri fileUri = data.getData();
             if (requestCode == IMPORT_XLSX_REQUEST_CODE && fileUri != null) {
                 // Import data from the selected Excel file
-                ExcelHelper.importXlsxToDatabase(this, fileUri);
+                ExcelUtils.importXlsxToDatabase(this, fileUri);
             } else if (requestCode == EXPORT_XLSX_REQUEST_CODE && fileUri != null) {
                 // Export data to the selected location
-                ExcelHelper.exportDatabaseToXlsx(this, fileUri);
+                ExcelUtils.exportDatabaseToXlsx(this, fileUri);
             } else if (requestCode == IMPORT_ZIP_REQUEST_CODE && fileUri != null) {
                 // Import images from the selected ZIP file
                 ZipHelper.importImagesFromZip(this, fileUri);
@@ -157,5 +165,6 @@ public class SettingsActivity extends AppCompatActivity {
                 ZipHelper.exportImagesToZip(this, fileUri);
             }
         }
+
     }
 }

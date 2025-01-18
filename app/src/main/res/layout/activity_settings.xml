@@ -293,7 +293,7 @@
                     app:layout_constraintStart_toEndOf="@id/ivClearDataIcon"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/ibClearData2"
+                    app:layout_constraintEnd_toStartOf="@id/ibClearData1"
                     android:layout_marginStart="10dp">
 
                     <!-- Title Text -->
@@ -318,13 +318,26 @@
                 </LinearLayout>
 
                 <ImageButton
+                    android:id="@+id/ibClearData1"
+                    android:layout_width="26dp"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Download Icon"
+                    android:src="@drawable/ic_database"
+                    android:background="@null"
+                    app:tint="#000000"
+
+                    app:layout_constraintEnd_toStartOf="@id/ibClearData2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginEnd="20dp"/>
+
+                <ImageButton
                     android:id="@+id/ibClearData2"
                     android:layout_width="26dp"
                     android:layout_height="match_parent"
                     android:contentDescription="Download Icon"
-                    android:src="@drawable/ic_trash"
+                    android:src="@drawable/ic_image"
                     android:background="@null"
-                    app:tint="#FF1C1C"
 
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"

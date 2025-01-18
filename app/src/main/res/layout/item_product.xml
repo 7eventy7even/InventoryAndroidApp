@@ -47,7 +47,7 @@
 
         <!-- Product Quantity -->
         <TextView
-            android:id="@+id/tvSellingCount"
+            android:id="@+id/tvQuantity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Selling: 15/16"

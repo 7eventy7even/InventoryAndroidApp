@@ -21,7 +21,9 @@ import java.util.Map;
 import vkx64.android.scanventory.R;
 import vkx64.android.scanventory.database.AppClient;
 import vkx64.android.scanventory.database.DaoItems;
+import vkx64.android.scanventory.database.DaoMarkets;
 import vkx64.android.scanventory.database.TableItems;
+import vkx64.android.scanventory.database.TableMarkets;
 import vkx64.android.scanventory.utilities.FileHelper;
 
 public class ScannedItemsAdapter extends RecyclerView.Adapter<ScannedItemsAdapter.ViewHolder> {
@@ -29,11 +31,18 @@ public class ScannedItemsAdapter extends RecyclerView.Adapter<ScannedItemsAdapte
     private final Context context;
     private final List<String> itemIds;
     private final Map<String, Integer> scannedItems;
+    private String selectedMarketName;
 
-    public ScannedItemsAdapter(Context context, Map<String, Integer> scannedItems) {
+    public ScannedItemsAdapter(Context context, Map<String, Integer> scannedItems, String selectedMarketName) {
         this.context = context;
         this.scannedItems = scannedItems;
         this.itemIds = new ArrayList<>(scannedItems.keySet());
+        this.selectedMarketName = selectedMarketName; // Initialize the field
+    }
+
+    public void setSelectedMarketName(String selectedMarketName) {
+        this.selectedMarketName = selectedMarketName;
+        notifyDataSetChanged(); // Refresh the adapter
     }
 
     @NonNull
@@ -46,30 +55,47 @@ public class ScannedItemsAdapter extends RecyclerView.Adapter<ScannedItemsAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String itemId = itemIds.get(position);
-        int quantity = scannedItems.get(itemId);
+        int scannedQuantity = scannedItems.get(itemId);
 
-        Log.d("ScannedItemsAdapter", "onBindViewHolder called for itemId: " + itemId + " with quantity: " + quantity);
+        Log.d("ScannedItemsAdapter", "onBindViewHolder called for itemId: " + itemId + " with quantity: " + scannedQuantity);
 
         new Thread(() -> {
             DaoItems daoItems = AppClient.getInstance(context).getAppDatabase().daoItems();
+            DaoMarkets daoMarkets = AppClient.getInstance(context).getAppDatabase().daoMarkets();
+
+            // Fetch the item details
             TableItems item = daoItems.getItemById(itemId);
 
             if (item == null) {
                 Log.e("ScannedItemsAdapter", "Item not found in database for itemId: " + itemId);
             }
 
+            // Fetch the selling quantity for the selected marketplace
+            TableMarkets marketEntry = null;
+            if (selectedMarketName != null) {
+                marketEntry = daoMarkets.getMarketByItemIdAndMarketName(itemId, selectedMarketName);
+            }
+
+            int sellingQuantity = marketEntry != null ? marketEntry.getMarket_quantity() : 0;
+
+            // Calculate remaining quantity dynamically
+            int remainingQuantity = sellingQuantity - scannedQuantity;
+
+            // Update the UI on the main thread
             holder.itemView.post(() -> {
                 if (item != null) {
                     holder.tvProductName.setText(item.getItem_name());
-                    holder.tvSellingCount.setText("Selling: " + (item.getItem_selling() - quantity) + "/" + item.getItem_selling());
-                    holder.tvQuantity.setText("x" + quantity);
+                    holder.tvQuantity.setText("x" + scannedQuantity);
+
+                    // Update Selling Quantity
+                    holder.tvSellingCount.setText("Selling Quantity: " + Math.max(remainingQuantity, 0)); // Ensure non-negative values
 
                     Log.d("ScannedItemsAdapter", "Setting item details for itemId: " + itemId);
                     loadItemImage(holder.ivProductImage, itemId);
                 } else {
                     holder.tvProductName.setText("Unknown Item");
-                    holder.tvSellingCount.setText("");
-                    holder.tvQuantity.setText("x" + quantity);
+                    holder.tvSellingCount.setText("Selling Quantity: 0");
+                    holder.tvQuantity.setText("x" + scannedQuantity);
 
                     Log.w("ScannedItemsAdapter", "Setting placeholder for unknown item with itemId: " + itemId);
                     holder.ivProductImage.setImageResource(R.drawable.im_placeholder);

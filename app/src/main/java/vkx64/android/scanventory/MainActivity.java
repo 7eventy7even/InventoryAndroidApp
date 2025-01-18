@@ -321,21 +321,7 @@ public class MainActivity extends AppCompatActivity {
             List<TableItems> filteredItems = new ArrayList<>();
             List<TableGroups> filteredGroups = new ArrayList<>();
 
-            if (query.startsWith("#selling >=")) {
-                Integer value = parseFilterValue(query, "#selling >=");
-                if (value == null) return; // Skip invalid query
-                filteredItems = AppClient.getInstance(getApplicationContext())
-                        .getAppDatabase()
-                        .daoItems()
-                        .searchItemsBySellingGreaterThanOrEqual(value);
-            } else if (query.startsWith("#selling <=")) {
-                Integer value = parseFilterValue(query, "#selling <=");
-                if (value == null) return; // Skip invalid query
-                filteredItems = AppClient.getInstance(getApplicationContext())
-                        .getAppDatabase()
-                        .daoItems()
-                        .searchItemsBySellingLessThanOrEqual(value);
-            } else if (query.startsWith("#storage >=")) {
+            if (query.startsWith("#storage >=")) {
                 Integer value = parseFilterValue(query, "#storage >=");
                 if (value == null) return; // Skip invalid query
                 filteredItems = AppClient.getInstance(getApplicationContext())
@@ -546,12 +532,12 @@ public class MainActivity extends AppCompatActivity {
      * Show the "Add Item" dialog.
      */
     private void showAddItemDialog() {
-        AddItemDialogFragment dialog = new AddItemDialogFragment((itemId, itemName, itemCategory, itemStorage, itemSelling) -> {
+        AddItemDialogFragment dialog = new AddItemDialogFragment((itemId, itemName, itemCategory, itemStorage) -> {
             // Create a new item with the currentGroupId as its parent
             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy-HH:mm");
             Date currentDate = new Date();
             String formattedDate = dateFormat.format(currentDate);
-            TableItems newItem = new TableItems(itemId, itemName, itemCategory, itemStorage, itemSelling, formattedDate, formattedDate, currentGroupId);
+            TableItems newItem = new TableItems(itemId, itemName, itemCategory, itemStorage, formattedDate, formattedDate, currentGroupId);
             AddNewItem(newItem);
         });
 

@@ -25,7 +25,7 @@ public class AddItemDialogFragment extends DialogFragment {
 
     public interface AddItemDialogListener {
         //* Listener interface for form submission *//
-        void onSubmit(String itemId, String itemName, String itemCategory, int itemStorage, int itemSelling);
+        void onSubmit(String itemId, String itemName, String itemCategory, int itemStorage);
     }
 
     public AddItemDialogFragment(AddItemDialogListener listener) {
@@ -42,7 +42,6 @@ public class AddItemDialogFragment extends DialogFragment {
         EditText etItemName = view.findViewById(R.id.etItemName);
         EditText etItemCategory = view.findViewById(R.id.etItemCategory);
         EditText etItemStorage = view.findViewById(R.id.etItemStorage);
-        EditText etItemSelling = view.findViewById(R.id.etItemSelling);
         Button btnCancel = view.findViewById(R.id.btnCancel);
         Button btnSubmit = view.findViewById(R.id.btnSubmit);
 
@@ -54,7 +53,6 @@ public class AddItemDialogFragment extends DialogFragment {
             String itemName = etItemName.getText().toString().trim();
             String itemCategory = etItemCategory.getText().toString().trim();
             String itemStorage = etItemStorage.getText().toString().trim();
-            String itemSelling = etItemSelling.getText().toString().trim();
 
             // Validate inputs
             if (itemId.isEmpty() || itemName.isEmpty()) {
@@ -64,9 +62,8 @@ public class AddItemDialogFragment extends DialogFragment {
 
             String finalCategory = itemCategory.isEmpty() ? null : itemCategory;
             int storageValue = itemStorage.isEmpty() ? 0 : Integer.parseInt(itemStorage);
-            int sellingValue = itemSelling.isEmpty() ? 0 : Integer.parseInt(itemSelling);
 
-            if (listener != null) listener.onSubmit(itemId, itemName, finalCategory, storageValue, sellingValue);
+            if (listener != null) listener.onSubmit(itemId, itemName, finalCategory, storageValue);
             dismiss();
         });
 

@@ -30,12 +30,6 @@ public interface DaoItems {
     @Query("SELECT * FROM items WHERE item_name LIKE '%' || :query || '%'")
     List<TableItems> searchItemsByName(String query);
 
-    @Query("SELECT * FROM items WHERE item_selling >= :value")
-    List<TableItems> searchItemsBySellingGreaterThanOrEqual(int value);
-
-    @Query("SELECT * FROM items WHERE item_selling <= :value")
-    List<TableItems> searchItemsBySellingLessThanOrEqual(int value);
-
     @Query("SELECT * FROM items WHERE item_storage >= :value")
     List<TableItems> searchItemsByStorageGreaterThanOrEqual(int value);
 

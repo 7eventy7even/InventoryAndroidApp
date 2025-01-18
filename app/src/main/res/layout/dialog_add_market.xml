@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dialog_add_market_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/bg_components"
+    android:backgroundTint="@color/background"
+    android:elevation="4dp"
+    android:gravity="center_vertical">
+
+    <!-- Market Name Container -->
+    <LinearLayout
+        android:id="@+id/llMarketName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="10dp">
+
+        <!-- Market Name Label -->
+        <TextView
+            android:id="@+id/tvMarketName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Market Name"
+            android:textSize="14sp"
+            android:textColor="@color/primary_text"
+            android:textStyle="bold"
+            android:layout_marginBottom="5dp" />
+
+        <!-- Market Name Input -->
+        <EditText
+            android:id="@+id/etMarketName"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_components"
+            android:padding="12dp"
+            android:inputType="textPersonName"
+            android:hint="Enter market name" />
+    </LinearLayout>
+
+    <!-- Market Quantity Container -->
+    <LinearLayout
+        android:id="@+id/llMarketQuantity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="10dp">
+
+        <!-- Market Quantity Label -->
+        <TextView
+            android:id="@+id/tvMarketQuantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Quantity"
+            android:textSize="14sp"
+            android:textColor="@color/primary_text"
+            android:textStyle="bold"
+            android:layout_marginBottom="5dp" />
+
+        <!-- Market Quantity Input -->
+        <EditText
+            android:id="@+id/etMarketQuantity"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_components"
+            android:padding="12dp"
+            android:inputType="number"
+            android:hint="Enter quantity" />
+    </LinearLayout>
+
+    <!-- Bottom Buttons Container -->
+    <LinearLayout
+        android:id="@+id/llBottomButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="16dp">
+
+        <!-- Cancel Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Cancel"
+            android:textColor="@color/primary_text"
+            android:textSize="13sp"
+            app:cornerRadius="6dp"
+            android:backgroundTint="@color/red"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+        <!-- Submit Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSubmit"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Add"
+            android:textColor="@color/primary_text"
+            android:textSize="13sp"
+            app:cornerRadius="6dp"
+            android:backgroundTint="@color/green"
+            android:layout_marginStart="15dp" />
+    </LinearLayout>
+
+</LinearLayout>

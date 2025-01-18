@@ -30,15 +30,18 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import vkx64.android.scanventory.adapter.GalleryAdapter;
+import vkx64.android.scanventory.adapter.MarketAdapter;
 import vkx64.android.scanventory.database.AppClient;
+import vkx64.android.scanventory.database.DaoMarkets;
 import vkx64.android.scanventory.database.TableItems;
+import vkx64.android.scanventory.database.TableMarkets;
 import vkx64.android.scanventory.utilities.FileHelper;
 import vkx64.android.scanventory.utilities.SingleImagePicker;
 
-public class ItemDetailsActivity extends AppCompatActivity {
+public class ItemDetailsActivity extends AppCompatActivity implements MarketAdapter.OnMarketChangeListener {
 
-    private EditText etItemId, etItemName, etItemCategory, etItemStorage, etItemSelling;
-    RecyclerView rvGallery;
+    private EditText etItemId, etItemName, etItemCategory, etItemStorage;
+    private RecyclerView rvGallery, rvMarketplace;
     private MaterialButton btnSubmit;
     private ImageButton ibLeftButton;
 
@@ -46,6 +49,8 @@ public class ItemDetailsActivity extends AppCompatActivity {
 
     private String itemId;
     private boolean isDataChanged = false;
+
+    private MarketAdapter marketAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,44 +62,60 @@ public class ItemDetailsActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
         initializeViews();
 
         itemId = getIntent().getStringExtra("item_id");
-        if (isInvalidItemId(itemId)) {
-            Toast.makeText(this, "Invalid item ID", Toast.LENGTH_SHORT).show();
+
+        if (itemId == null) {
+            Toast.makeText(this, "Invalid Item ID", Toast.LENGTH_SHORT).show();
+            finish();
             return;
         }
 
-        // Fetch item details asynchronously
+        // Initialize the MarketAdapter with context, empty list, executor, and itemId
+        marketAdapter = new MarketAdapter(this, new ArrayList<>(), executor, itemId);
+        marketAdapter.setOnMarketChangeListener(this);
+        rvMarketplace.setAdapter(marketAdapter);
+
         fetchItemDetails(itemId);
         loadGallery();
     }
 
-    /**
-     * Initialize views and listeners.
-     */
     private void initializeViews() {
         etItemId = findViewById(R.id.etItemId);
         etItemName = findViewById(R.id.etItemName);
         etItemCategory = findViewById(R.id.etItemCategory);
         etItemStorage = findViewById(R.id.etItemStorage);
-        etItemSelling = findViewById(R.id.etItemSelling);
 
         btnSubmit = findViewById(R.id.btnSubmit);
         btnSubmit.setEnabled(false);
-        btnSubmit.setOnClickListener(v -> saveItemDetails());
+        btnSubmit.setOnClickListener(v -> saveAllDetails());
 
         addTextChangeListener(etItemName);
         addTextChangeListener(etItemCategory);
         addTextChangeListener(etItemStorage);
-        addTextChangeListener(etItemSelling);
 
         rvGallery = findViewById(R.id.rvGallery);
         rvGallery.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         ibLeftButton = findViewById(R.id.ibLeftButton);
         ibLeftButton.setOnClickListener(v -> finish());
+
+        rvMarketplace = findViewById(R.id.rvMarketplace);
+        rvMarketplace.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void loadMarkets() {
+        executor.execute(() -> {
+            List<TableMarkets> markets = AppClient.getInstance(getApplicationContext())
+                    .getAppDatabase()
+                    .daoMarkets()
+                    .getMarketsByItemId(itemId);
+
+            runOnUiThread(() -> {
+                marketAdapter.setMarkets(markets);
+            });
+        });
     }
 
     private void loadGallery() {
@@ -150,10 +171,6 @@ public class ItemDetailsActivity extends AppCompatActivity {
         }
     }
 
-    private boolean isInvalidItemId(String itemId) {
-        return itemId == null || itemId.isEmpty();
-    }
-
     private void populateItemDetails(TableItems item) {
         isDataChanged = false; // Prevent TextWatcher from enabling the button
 
@@ -161,10 +178,15 @@ public class ItemDetailsActivity extends AppCompatActivity {
         etItemName.setText(item.getItem_name());
         etItemCategory.setText(item.getItem_category());
         etItemStorage.setText(String.valueOf(item.getItem_storage()));
-        etItemSelling.setText(String.valueOf(item.getItem_selling()));
 
         btnSubmit.setEnabled(false); // Ensure button stays disabled
         btnSubmit.setBackgroundTintList(getResources().getColorStateList(R.color.hints));
+
+        // Pass item_storage to MarketAdapter for validation
+        marketAdapter.setItemStorage(item.getItem_storage());
+
+        // Now load the markets after setting itemStorage
+        loadMarkets();
     }
 
     private void fetchItemDetails(String itemId) {
@@ -179,9 +201,10 @@ public class ItemDetailsActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 if (item == null) {
                     Toast.makeText(this, "Item not found", Toast.LENGTH_SHORT).show();
-                } else {
-                    populateItemDetails(item);
+                    return;
                 }
+                // Populate the UI with the item details
+                populateItemDetails(item);
             });
         });
     }
@@ -195,10 +218,11 @@ public class ItemDetailsActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+
                 if (!isDataChanged) {
-                    // Allow changes to be detected after initial population
                     isDataChanged = true;
                 }
+
                 // Enable the button and set it to green
                 btnSubmit.setEnabled(true);
                 btnSubmit.setBackgroundTintList(getResources().getColorStateList(R.color.green));
@@ -257,18 +281,16 @@ public class ItemDetailsActivity extends AppCompatActivity {
         loadGallery();
     }
 
-    private void saveItemDetails() {
+    private void saveAllDetails() {
         // Retrieve input values from EditTexts
         String itemName = etItemName.getText().toString().trim();
         String itemCategory = etItemCategory.getText().toString().trim();
         String storageValue = etItemStorage.getText().toString().trim();
-        String sellingValue = etItemSelling.getText().toString().trim();
 
         String categoryToSave = itemCategory.isEmpty() ? null : itemCategory;
 
         // Convert storage and selling values to integers, default to 0 if empty
         int itemStorage = storageValue.isEmpty() ? 0 : Integer.parseInt(storageValue);
-        int itemSelling = sellingValue.isEmpty() ? 0 : Integer.parseInt(sellingValue);
 
         // Validate inputs
         if (itemName.isEmpty()) {
@@ -293,7 +315,6 @@ public class ItemDetailsActivity extends AppCompatActivity {
             existingItem.setItem_name(itemName);
             existingItem.setItem_category(categoryToSave);
             existingItem.setItem_storage(itemStorage);
-            existingItem.setItem_selling(itemSelling);
 
             // Update the item in the database
             AppClient.getInstance(getApplicationContext())
@@ -301,24 +322,55 @@ public class ItemDetailsActivity extends AppCompatActivity {
                     .daoItems()
                     .updateItem(existingItem);
 
+            // Now, update all market entries
+            List<TableMarkets> updatedMarkets = marketAdapter.getMarkets();
+
+            // Validate all market quantities
+            boolean hasInvalidQuantities = false;
+            StringBuilder errorMessage = new StringBuilder();
+
+            for (TableMarkets market : updatedMarkets) {
+                if (market.getMarket_quantity() > itemStorage) {
+                    hasInvalidQuantities = true;
+                    errorMessage.append("Market '")
+                            .append(market.getMarket_name())
+                            .append("' quantity exceeds storage limit.\n");
+                }
+            }
+
+            if (hasInvalidQuantities) {
+                runOnUiThread(() -> {
+                    Toast.makeText(this, errorMessage.toString(), Toast.LENGTH_LONG).show();
+                });
+                return; // Do not proceed with updating the database
+            }
+
+            DaoMarkets daoMarkets = AppClient.getInstance(getApplicationContext())
+                    .getAppDatabase()
+                    .daoMarkets();
+
+            daoMarkets.updateMarkets(updatedMarkets); // Ensure this method exists
+
             // Notify the user on the main thread
             runOnUiThread(() -> {
                 isDataChanged = false; // Reset change flag
                 btnSubmit.setEnabled(false); // Disable the button again
                 btnSubmit.setBackgroundTintList(getResources().getColorStateList(R.color.hints));
-                Toast.makeText(this, "Item updated successfully", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Item and Market entries updated successfully", Toast.LENGTH_SHORT).show();
                 finish();
             });
         });
     }
 
-    private void updateButtonState(boolean isEnabled) {
-        btnSubmit.setEnabled(isEnabled);
-        if (isEnabled) {
-            btnSubmit.setBackgroundTintList(getResources().getColorStateList(R.color.green)); // Green when enabled
-        } else {
-            btnSubmit.setBackgroundTintList(getResources().getColorStateList(R.color.hints)); // Gray when disabled
-        }
+    @Override
+    public void onMarketChanged() {
+        // Enable the save button and set it to green
+        runOnUiThread(() -> {
+            if (!btnSubmit.isEnabled()) {
+                btnSubmit.setEnabled(true);
+                btnSubmit.setBackgroundTintList(getResources().getColorStateList(R.color.green));
+            }
+        });
     }
 
     // Shutdown the executor when the activity is destroyed to avoid leaks

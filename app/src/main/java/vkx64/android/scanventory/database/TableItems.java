@@ -26,18 +26,16 @@ public class TableItems {
 
     public String item_category;
     public int item_storage;
-    public int item_selling;
     public String item_created;
     public String item_updated;
     public String group_id;
 
     // Constructor
-    public TableItems(@NonNull String item_id, @NonNull String item_name, String item_category, int item_storage, int item_selling, String item_created, String item_updated, String group_id) {
+    public TableItems(@NonNull String item_id, @NonNull String item_name, String item_category, int item_storage, String item_created, String item_updated, String group_id) {
         this.item_id = item_id;
         this.item_name = item_name;
         this.item_category = item_category;
         this.item_storage = item_storage;
-        this.item_selling = item_selling;
         this.item_created = item_created;
         this.item_updated = item_updated;
         this.group_id = group_id;
@@ -76,14 +74,6 @@ public class TableItems {
 
     public void setItem_storage(int item_storage) {
         this.item_storage = item_storage;
-    }
-
-    public int getItem_selling() {
-        return item_selling;
-    }
-
-    public void setItem_selling(int item_selling) {
-        this.item_selling = item_selling;
     }
 
     public String getItem_created() {
