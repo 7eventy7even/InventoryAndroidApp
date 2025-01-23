@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-
     android:orientation="vertical"
     android:padding="16dp"
     android:background="@drawable/bg_components"
@@ -30,7 +29,7 @@
                 android:layout_height="match_parent"
                 android:clickable="true"
                 android:focusable="true"
-                android:scaleType="centerCrop"/>
+                android:scaleType="centerCrop" />
 
         </androidx.cardview.widget.CardView>
 
@@ -52,11 +51,11 @@
                     android:id="@+id/tvGroupId"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Group ID"
+                    android:text="@string/group_id"
                     android:textSize="14sp"
                     android:textColor="@color/primary_text"
                     android:textStyle="bold"
-                    android:layout_marginBottom="5dp"/>
+                    android:layout_marginBottom="5dp" />
 
                 <!-- Group ID Input -->
                 <EditText
@@ -82,11 +81,11 @@
                     android:id="@+id/tvGroupName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Group Name"
+                    android:text="@string/group_name"
                     android:textSize="14sp"
                     android:textColor="@color/primary_text"
                     android:textStyle="bold"
-                    android:layout_marginBottom="5dp"/>
+                    android:layout_marginBottom="5dp" />
 
                 <!-- Group Name Input -->
                 <EditText
@@ -95,7 +94,7 @@
                     android:layout_height="44dp"
                     android:background="@drawable/bg_components"
                     android:padding="12dp"
-                    android:inputType="text"/>
+                    android:inputType="text" />
 
             </LinearLayout>
 
@@ -117,24 +116,23 @@
             android:id="@+id/btnCancel"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Cancel"
+            android:text="@string/cancel"
             android:textColor="@color/primary_text"
             android:textSize="13sp"
             app:cornerRadius="6dp"
-            android:backgroundTint="@color/red"/>
+            android:backgroundTint="@color/red" />
 
         <!-- Submit Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSubmit"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Submit"
+            android:text="@string/submit"
             android:textColor="@color/primary_text"
             android:textSize="13sp"
             app:cornerRadius="6dp"
             android:backgroundTint="@color/green"
-            android:layout_marginStart="15dp"/>
+            android:layout_marginStart="15dp" />
     </LinearLayout>
 
 </LinearLayout>
-

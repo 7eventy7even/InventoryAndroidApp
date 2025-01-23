@@ -18,6 +18,9 @@ public interface ClearDataDao {
     @Query("DELETE FROM groups")
     void clearGroups();
 
-    @Query("DELETE FROM sqlite_sequence") // Optional: Reset auto-increment counters
+    @Query("DELETE FROM market")
+    void clearMarket();
+
+    @Query("DELETE FROM sqlite_sequence")
     void resetAutoIncrement();
 }

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".OrderActivity"
 
-    tools:ignore="HardcodedText,SmallSp"
+    tools:ignore="SmallSp"
     android:background="@color/background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -40,7 +40,7 @@
                 android:layout_height="35dp"
                 android:src="@drawable/ic_leftarrow"
                 android:background="@null"
-                android:contentDescription="Left Arrow"
+                android:contentDescription="@string/left_arrow_desc"
                 app:tint="@color/hints" />
 
             <!-- Header Title -->
@@ -48,7 +48,7 @@
                 android:id="@+id/tvHeader"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text="New Order"
+                android:text="@string/new_order"
                 android:layout_weight="1"
                 android:textSize="15sp"
                 android:textColor="@color/hints"
@@ -62,7 +62,7 @@
                 android:layout_height="35dp"
                 android:src="@null"
                 android:background="@null"
-                android:contentDescription="Left Arrow"/>
+                android:contentDescription="@string/left_arrow_desc"/>
 
         </LinearLayout>
 
@@ -98,7 +98,6 @@
             android:id="@+id/rvItemList"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/spinnerMarkets"
@@ -112,7 +111,6 @@
             android:layout_height="46dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -136,7 +134,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="Complete Order"
+                    android:text="@string/complete_order"
                     android:textColor="@color/primary_text"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -161,11 +159,10 @@
                     android:layout_height="20dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_trash"
-                    android:contentDescription="Order History Icon"
+                    android:contentDescription="@string/cancel_order_icon_desc"
                     app:tint="#FF4F4F" />
 
             </androidx.cardview.widget.CardView>
-
 
         </LinearLayout>
 

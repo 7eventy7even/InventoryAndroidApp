@@ -211,6 +211,7 @@ public class OrderActivity extends AppCompatActivity implements QRScanner.QRScan
             DaoOrderItems daoOrderItems = db.daoOrderItems();
             DaoMarkets daoMarkets = db.daoMarkets();
             DaoOrders daoOrders = db.daoOrders();
+            DaoItems daoItems = db.daoItems();
 
             try {
                 db.runInTransaction(() -> {
@@ -249,6 +250,10 @@ public class OrderActivity extends AppCompatActivity implements QRScanner.QRScan
                         // Update market quantities
                         marketEntry.setMarket_quantity(marketEntry.getMarket_quantity() - quantity);
                         daoMarkets.updateMarket(marketEntry);
+
+                        TableItems itemEntry = daoItems.getItemById(itemId);
+                        itemEntry.setItem_storage(itemEntry.getItem_storage() - quantity);
+                        daoItems.updateItem(itemEntry);
                     }
                 });
 

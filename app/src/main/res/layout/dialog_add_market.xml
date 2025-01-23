@@ -24,7 +24,7 @@
             android:id="@+id/tvMarketName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Market Name"
+            android:text="@string/market_name_label"
             android:textSize="14sp"
             android:textColor="@color/primary_text"
             android:textStyle="bold"
@@ -38,7 +38,7 @@
             android:background="@drawable/bg_components"
             android:padding="12dp"
             android:inputType="textPersonName"
-            android:hint="Enter market name" />
+            android:hint="@string/market_name_hint" />
     </LinearLayout>
 
     <!-- Market Quantity Container -->
@@ -54,7 +54,7 @@
             android:id="@+id/tvMarketQuantity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Quantity"
+            android:text="@string/market_quantity_label"
             android:textSize="14sp"
             android:textColor="@color/primary_text"
             android:textStyle="bold"
@@ -68,7 +68,7 @@
             android:background="@drawable/bg_components"
             android:padding="12dp"
             android:inputType="number"
-            android:hint="Enter quantity" />
+            android:hint="@string/market_quantity_hint" />
     </LinearLayout>
 
     <!-- Bottom Buttons Container -->
@@ -85,7 +85,7 @@
             android:id="@+id/btnCancel"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:text="Cancel"
+            android:text="@string/cancel"
             android:textColor="@color/primary_text"
             android:textSize="13sp"
             app:cornerRadius="6dp"
@@ -97,7 +97,7 @@
             android:id="@+id/btnSubmit"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:text="Add"
+            android:text="@string/add"
             android:textColor="@color/primary_text"
             android:textSize="13sp"
             app:cornerRadius="6dp"

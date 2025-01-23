@@ -271,16 +271,15 @@ public class ExcelUtils {
             importedCount++;
 
             // Process Selling: columns (markets)
+            int totalMarketQuantity = 0;
             for (int i = 7; i < row.getLastCellNum(); i++) {
                 String columnName = sheet.getRow(0).getCell(i).getStringCellValue();
                 if (columnName.startsWith("Selling: ")) {
                     String marketName = columnName.substring(9); // Extract market name
                     Integer marketQuantity = getCellValueAsInteger(row.getCell(i));
 
-                    // Validation: Check if marketQuantity exceeds storage
-                    if (marketQuantity != null && storage != null && marketQuantity > storage) {
-                        throw new Exception("Market quantity (" + marketQuantity + ") exceeds storage (" + storage + ") for Item '" + itemId + "'");
-                    }
+                    // Add market quantity to the total
+                    totalMarketQuantity += (marketQuantity != null ? marketQuantity : 0);
 
                     // Insert market data into the TableMarkets database
                     TableMarkets tableMarket = new TableMarkets(
@@ -291,6 +290,16 @@ public class ExcelUtils {
 
                     daoMarkets.insertOrUpdateMarket(tableMarket);
                 }
+            }
+
+            // Validation: Check if total market quantity exceeds storage
+            if (totalMarketQuantity > (storage != null ? storage : 0)) {
+                String errorMessage = "Market quantities for item '" + itemId + "' exceed storage. Total: "
+                        + totalMarketQuantity + ", Storage: " + storage;
+                Log.e(TAG, errorMessage);
+
+                // Throw exception to trigger rollback
+                throw new Exception(errorMessage);
             }
         }
 

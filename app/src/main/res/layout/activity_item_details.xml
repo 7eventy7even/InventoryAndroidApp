@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".ItemDetailsActivity"
 
-    tools:ignore="HardcodedText,SmallSp"
+    tools:ignore="SmallSp, ContentDescription"
     android:background="@color/background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -40,7 +40,6 @@
                 android:layout_height="35dp"
                 android:src="@drawable/ic_leftarrow"
                 android:background="@null"
-                android:contentDescription="Left Arrow"
                 app:tint="@color/hints" />
 
             <!-- Header Title -->
@@ -48,7 +47,7 @@
                 android:id="@+id/tvHeader"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text="Item Details"
+                android:text="@string/item_details"
                 android:layout_weight="1"
                 android:textSize="15sp"
                 android:textColor="@color/hints"
@@ -62,7 +61,7 @@
                 android:layout_height="35dp"
                 android:src="@null"
                 android:background="@null"
-                android:contentDescription="Left Arrow"/>
+                android:contentDescription="@string/left_arrow_desc"/>
 
         </LinearLayout>
 
@@ -97,7 +96,7 @@
                     android:id="@+id/tvItemId"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Item ID"
+                    android:text="@string/item_id"
                     android:textSize="14sp"
                     android:textColor="@color/primary_text"
                     android:textStyle="bold"
@@ -128,7 +127,7 @@
                     android:id="@+id/tvItemName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Item Name"
+                    android:text="@string/item_name"
                     android:textSize="14sp"
                     android:textColor="@color/primary_text"
                     android:textStyle="bold"
@@ -167,7 +166,7 @@
                         android:id="@+id/tvItemStorage"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Storage Quantity"
+                        android:text="@string/storage_quantity"
                         android:textSize="14sp"
                         android:textColor="@color/primary_text"
                         android:textStyle="bold"
@@ -196,7 +195,7 @@
                         android:id="@+id/tvItemCategory"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Selling Quantity"
+                        android:text="@string/selling_quantity"
                         android:textSize="14sp"
                         android:textColor="@color/primary_text"
                         android:textStyle="bold"
@@ -233,7 +232,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Marketplaces"
+                    android:text="@string/marketplaces"
                     android:textSize="14sp"
                     android:textColor="@color/primary_text"
                     android:textStyle="bold"
@@ -265,7 +264,7 @@
                 android:id="@+id/btnSubmit"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Save Changes"
+                android:text="@string/save_changes"
                 android:textColor="@color/primary_text"
                 android:textSize="13sp"
                 app:cornerRadius="6dp"

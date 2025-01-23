@@ -89,6 +89,7 @@ public class SettingsActivity extends AppCompatActivity {
             clearDataDao.clearOrders();
             clearDataDao.clearItems();
             clearDataDao.clearGroups();
+            clearDataDao.clearMarket();
             clearDataDao.resetAutoIncrement();
 
             runOnUiThread(() -> Toast.makeText(this, "Database cleared successfully!", Toast.LENGTH_SHORT).show());

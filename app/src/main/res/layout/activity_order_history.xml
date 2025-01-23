@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".OrderHistoryActivity"
 
-    tools:ignore="HardcodedText,SmallSp"
+    tools:ignore="SmallSp"
     android:background="@color/background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -40,7 +40,7 @@
                 android:layout_height="35dp"
                 android:src="@drawable/ic_leftarrow"
                 android:background="@null"
-                android:contentDescription="Left Arrow"
+                android:contentDescription="@string/left_arrow_desc"
                 app:tint="@color/hints" />
 
             <!-- Header Title -->
@@ -48,7 +48,7 @@
                 android:id="@+id/tvHeader"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text="Order History"
+                android:text="@string/order_history"
                 android:layout_weight="1"
                 android:textSize="15sp"
                 android:textColor="@color/hints"
@@ -62,7 +62,7 @@
                 android:layout_height="35dp"
                 android:src="@null"
                 android:background="@null"
-                android:contentDescription="Left Arrow"/>
+                android:contentDescription="@string/left_arrow_desc"/>
 
         </LinearLayout>
 

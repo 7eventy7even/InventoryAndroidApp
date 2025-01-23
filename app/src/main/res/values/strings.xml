@@ -1,3 +1,58 @@
 <resources>
-    <string name="app_name">Scanventory</string>
+    <string name="app_name">Scanventory</string>\
+
+    <string name="item_details">Item Details</string>
+    <string name="item_id">Item ID</string>
+    <string name="item_name">Item Name</string>
+    <string name="storage_quantity">Storage Quantity</string>
+    <string name="selling_quantity">Selling Quantity</string>
+    <string name="marketplaces">Marketplaces</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="left_arrow_desc">Left Arrow</string>
+
+    <string name="inventory_management">Inventory Management</string>
+    <string name="search_hint">Search</string>
+    <string name="recently_sold">Recently Sold</string>
+    <string name="add_item_icon_desc">Add Item Icon</string>
+    <string name="add_folder_icon_desc">Add Folder Icon</string>
+    <string name="settings_icon_desc">Settings Icon</string>
+    <string name="search_icon_desc">Search Icon</string>
+    <string name="filter_icon_desc">Filter Icon</string>
+    <string name="new_order">New Order</string>
+    <string name="order_history_icon_desc">Order History Icon</string>
+
+    <string name="complete_order">Complete Order</string>
+    <string name="cancel_order_icon_desc">Cancel Order Icon</string>
+
+    <string name="order_history">Order History</string>
+
+    <string name="right_arrow_desc">Right Arrow</string>
+    <string name="database_icon_desc">Database Icon</string>
+    <string name="upload_icon_desc">Upload Icon</string>
+    <string name="download_icon_desc">Download Icon</string>
+    <string name="image_icon_desc">Image Icon</string>
+    <string name="clear_data_icon_desc">Clear Data Icon</string>
+    <string name="application_settings">Application Settings</string>
+    <string name="xlsx_to_database">.xlsx to Database</string>
+    <string name="xlsx_import_export">Import/export .xlsx files to/from the database.</string>
+    <string name="product_images">Product Images</string>
+    <string name="images_import_export">Import/export Images to/from the database.</string>
+    <string name="clear_data">Clear Data</string>
+    <string name="select_clear_data">Select Whether to Clear Database or Images.</string>
+
+    <string name="group_id">Group ID</string>
+    <string name="group_name">Group Name</string>
+    <string name="cancel">Cancel</string>
+    <string name="submit">Submit</string>
+
+    <string name="category">Category</string>
+
+    <string name="market_name_label">Market Name</string>
+    <string name="market_name_hint">Enter market name</string>
+    <string name="market_quantity_label">Quantity</string>
+    <string name="market_quantity_hint">Enter quantity</string>
+    <string name="add">Add</string>
+
+    <string name="quantity_hint">Value</string>
+    <string name="delete_icon_desc">Delete</string>
 </resources>
